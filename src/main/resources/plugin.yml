@@ -1,0 +1,4 @@
+name: TownshipCore
+version: '${project.version}'
+main: com.coruptical.townshipcore.TownshipCore
+api-version: '1.20'
