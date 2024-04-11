@@ -1,14 +1,21 @@
 package com.coruptical.townshipcore;
 
+import com.coruptical.townshipcore.models.MarketItem;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
+
 public final class TownshipCore extends JavaPlugin {
     private static TownshipCore instance;
-
     private Economy economy;
+    private final HashMap<String, MarketItem> marketItems = new HashMap<>();
+
+    public HashMap<String, MarketItem> getMarketItems() {
+        return marketItems;
+    }
 
     public Economy getEconomy() {
         return economy;
