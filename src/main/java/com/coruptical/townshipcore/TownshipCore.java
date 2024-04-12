@@ -7,6 +7,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
+import java.util.logging.Level;
 
 public final class TownshipCore extends JavaPlugin {
     private static TownshipCore instance;
@@ -31,6 +32,16 @@ public final class TownshipCore extends JavaPlugin {
 
         // Initialise database and create file
         DatabaseHandler.getInstance().init(instance);
+    
+        // Attempt to setup economy
+        // If this fails, the plugin disables itself.
+        if (!setupEconomy(this)) {
+            getLogger().log(Level.SEVERE, "Economy failed to setup. Disabling TownshipCore.java...");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+
     }
 
     @Override
