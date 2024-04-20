@@ -113,3 +113,4 @@ buildNumber.properties
 run/
 .idea/material_theme_project_new.xml
 .vscode/settings.json
+.vscode/
