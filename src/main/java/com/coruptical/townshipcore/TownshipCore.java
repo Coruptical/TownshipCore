@@ -2,6 +2,7 @@ package com.coruptical.townshipcore;
 
 import com.coruptical.townshipcore.models.MarketItem;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
+import com.coruptical.townshipcore.utils.MarketHandler;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,6 +14,7 @@ public final class TownshipCore extends JavaPlugin {
     private static TownshipCore instance;
     private Economy economy;
     private final HashMap<String, MarketItem> marketItems = new HashMap<>();
+    private MarketHandler marketHandler;
 
     public HashMap<String, MarketItem> getMarketItems() {
         return marketItems;
@@ -33,7 +35,7 @@ public final class TownshipCore extends JavaPlugin {
         // Initialise database and create file
         DatabaseHandler.getInstance().init(instance);
     
-        // Attempt to setup economy
+        // Attempt to set up economy
         // If this fails, the plugin disables itself.
         if (!setupEconomy(this)) {
             getLogger().log(Level.SEVERE, "Economy failed to setup. Disabling TownshipCore.java...");
@@ -41,12 +43,21 @@ public final class TownshipCore extends JavaPlugin {
             return;
         }
 
+        // Set up market handler and market items
+        marketHandler = MarketHandler.getInstance();
+        marketHandler.init(this);
+        marketHandler.createCustomConfig();
+
 
     }
 
     @Override
     public void onDisable() {
 
+    }
+
+    public MarketHandler getMarketHandler(){
+        return marketHandler;
     }
 
     // Utility methods
