@@ -2,7 +2,6 @@ package com.coruptical.townshipcore.utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -12,7 +11,6 @@ import com.coruptical.townshipcore.models.MarketItem;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class MarketHandler {
     // Make class read-only
