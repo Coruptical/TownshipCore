@@ -34,4 +34,13 @@ public class MarketItem{
     public void setSellPrice(double sellPrice) {
         this.sellPrice = sellPrice;
     }
+
+    @Override
+    public String toString() {
+        return "MarketItem{" +
+                "itemName='" + itemName + '\'' +
+                ", buyPrice=" + buyPrice +
+                ", sellPrice=" + sellPrice +
+                '}';
+    }
 }

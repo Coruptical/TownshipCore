@@ -1,6 +1,8 @@
 # Allows us to get the prices below, add name to this list
 # if you've added a new item to the market, and configure buy and sell price.
 # remove a namespace from this list once you don't need it anymore.
+
+# ITEM NAMES NEED TO BE ACCURATE TO CREATE ACCURATE ICONS IN THE MARKET GUI.
 items:
   - gold_ingot
   - iron_ingot
@@ -9,11 +11,14 @@ items:
 
 # Prices in the market
 gold_ingot:
-  buy: 50.55
-  sell: 43.55
+  name: "Gold Ingot"
+  buyPrice: 50.55
+  sellPrice: 43.55
 iron_ingot:
-  buy: 40.23
-  sell: 24.44
+  name: "Iron Ingot"
+  buyPrice: 40.23
+  sellPrice: 24.44
 diamond:
-  buy: 150.98
-  sell: 140.22
+  name: "Diamond"
+  buyPrice: 150.98
+  sellPrice: 140.22

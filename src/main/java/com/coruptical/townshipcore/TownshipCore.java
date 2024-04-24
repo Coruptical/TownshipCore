@@ -5,6 +5,7 @@ import com.coruptical.townshipcore.utils.MarketHandler;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
+import java.util.logging.Level;
 
 public final class TownshipCore extends JavaPlugin {
     private static TownshipCore instance;
@@ -23,13 +24,21 @@ public final class TownshipCore extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        
+
         // Set up market handler and market items
         marketHandler = MarketHandler.getInstance();
         marketHandler.init(this);
         marketHandler.createCustomConfig();
 
         marketItemMap = marketHandler.getMarketItems();
+
+        for (String key : marketItemMap.keySet()){
+            MarketItem item = marketItemMap.get(key);
+            getLogger().log(Level.INFO, String.format(
+                    "%s: %s",
+                    key, item
+            ));
+        }
     }
 
     @Override

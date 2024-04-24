@@ -44,7 +44,7 @@ public class MarketHandler {
         if (!customConfigFile.exists()) {
             customConfigFile.getParentFile().mkdirs();
             plugin.saveResource(configFileName, false);
-         }
+        }
 
         customConfig = new YamlConfiguration();
         try {
@@ -52,8 +52,6 @@ public class MarketHandler {
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
-
-        // YamlConfiguration.loadConfiguration(customConfigFile);
     }
 
     public HashMap<String, MarketItem> getMarketItems(){
@@ -62,6 +60,27 @@ public class MarketHandler {
         FileConfiguration config = getCustomConfig();
         List<String> itemPathNames = config.getStringList("items");
         plugin.getLogger().log(Level.INFO, itemPathNames.toString());
+
+        for (String itemPath : itemPathNames){
+            String itemName = config.getString(String.format(
+                    "%s.name",
+                    itemPath
+            ));
+
+            double itemBuyPrice = Utils.round(config.getDouble(String.format(
+                    "%s.buyPrice",
+                    itemPath
+            )));
+
+            double itemSellPrice = Utils.round(config.getDouble(String.format(
+                    "%s.sellPrice",
+                    itemPath
+            )));
+
+            MarketItem marketItem = new MarketItem(itemName, itemBuyPrice, itemSellPrice);
+            marketItemsMap.put(itemPath, marketItem);
+        }
+
         return marketItemsMap;
     }
 }
