@@ -26,23 +26,27 @@ public class DatabaseHandler {
     public void init(TownshipCore plugin){
         this.plugin = plugin;
 
-        databaseFile = new File(plugin.getDataFolder().getAbsolutePath(), DB_NAME+".db");
-        if (!databaseFile.exists()){
+
+        String databaseFileName = DB_NAME+".db";
+        databaseFile = new File(plugin.getDataFolder(), databaseFileName);
+        if (!databaseFile.exists()) {
+            databaseFile.getParentFile().mkdirs();
             try {
                 databaseFile.createNewFile();
-                plugin.getLogger().log(Level.WARNING,
-                        "Database file created.");
             } catch (IOException e) {
-                e.printStackTrace();
-                plugin.getLogger().log(Level.SEVERE,
-                        "File write error for database file.");
+                plugin.getLogger().log(Level.SEVERE, "Failed to create data.db file!");
             }
         }
+
+        // Test connections
+        connect();
+
+        closeConnection();
     }
 
     public Connection getConnection(){
         try {
-            return DriverManager.getConnection("jdbc:sqlite:" + databaseFile);
+            return DriverManager.getConnection("jdbc:sqlite:" + databaseFile.getName());
         } catch (SQLException e) {
             e.printStackTrace();
             plugin.getLogger().log(Level.SEVERE,
@@ -52,7 +56,7 @@ public class DatabaseHandler {
         }
     }
 
-    public void openConnection(){
+    public void connect(){
         conn = getConnection();
         plugin.getLogger().log(Level.INFO,
                 "Opened database connection.");

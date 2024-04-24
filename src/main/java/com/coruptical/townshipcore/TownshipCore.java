@@ -1,6 +1,7 @@
 package com.coruptical.townshipcore;
 
 import com.coruptical.townshipcore.models.MarketItem;
+import com.coruptical.townshipcore.utils.DatabaseHandler;
 import com.coruptical.townshipcore.utils.MarketHandler;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -11,9 +12,14 @@ public final class TownshipCore extends JavaPlugin {
     private static TownshipCore instance;
     private HashMap<String, MarketItem> marketItemMap = new HashMap<>();
     private MarketHandler marketHandler;
+    private DatabaseHandler databaseHandler;
 
     public HashMap<String, MarketItem> getMarketItemMap() {
         return marketItemMap;
+    }
+
+    public DatabaseHandler getDatabaseHandler () {
+        return databaseHandler;
     }
 
     public static TownshipCore getInstance() {
@@ -23,6 +29,10 @@ public final class TownshipCore extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+
+        // Set up database and economy stuff
+        databaseHandler = DatabaseHandler.getInstance();
+        databaseHandler.init(this);
 
 
         // Set up market handler and market items
