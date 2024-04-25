@@ -27,26 +27,26 @@ public class EconomyHandler {
         this.databaseHandler = databaseHandler;
     }
 
-    public boolean createTable(){
+    // TODO: Make it so we don't output logger message if table already exists.
+    public void createTable(){
         Connection connection = databaseHandler.getConnection();
 
-        if (!databaseHandler.tableExists(connection, TABLE_NAME)){
-            try {
-                Statement statement = connection.createStatement();
-                String sql = String.format(
-                        "CREATE TABLE IF NOT EXISTS %s (UUID varchar(255), " +
-                                "displayName varchar(255), " +
-                                "balance FLOAT)"
-                );
-                statement.execute(sql);
-            } catch (SQLException e) {
-                plugin.getLogger().log(Level.SEVERE, "There was an error while creating the economy database table.");
-                throw new RuntimeException(e);
-            }
-            return true;
-        }
+        try {
+            Statement statement = connection.createStatement();
+            String sql = String.format(
+                    "CREATE TABLE IF NOT EXISTS %s (UUID varchar(255), " +
+                            "displayName varchar(255), " +
+                            "balance FLOAT)",
+                    TABLE_NAME
+            );
+            statement.execute(sql);
 
-        return false;
+            plugin.getLogger().log(Level.WARNING, "Created Player_Economy database table.");
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "There was an error while creating the economy database table.");
+            throw new RuntimeException(e);
+        }
     }
 
+    
 }
