@@ -11,3 +11,7 @@ Backend for economy:
 - Each object has a name (PK), and contains two attributes (buyPrice, sellPrice)
 - This will auto update every 5 mins, while live updates stay in RAM
 - In plugin RAM -> Hashmap<ItemName(STRING), MarketItem(Object)>
+
+Backend for database handler:
+- We need to be able to see if a table exists, so we can make a table of table names with ids
+for people to query and see if a table exists based on these names.
