@@ -1,5 +1,6 @@
 package com.coruptical.townshipcore;
 
+import com.coruptical.townshipcore.economy.EconomyHandler;
 import com.coruptical.townshipcore.models.MarketItem;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
 import com.coruptical.townshipcore.utils.MarketHandler;
@@ -13,6 +14,7 @@ public final class TownshipCore extends JavaPlugin {
     private HashMap<String, MarketItem> marketItemMap = new HashMap<>();
     private MarketHandler marketHandler;
     private DatabaseHandler databaseHandler;
+    private EconomyHandler economyHandler;
 
     public HashMap<String, MarketItem> getMarketItemMap() {
         return marketItemMap;
@@ -20,6 +22,10 @@ public final class TownshipCore extends JavaPlugin {
 
     public DatabaseHandler getDatabaseHandler () {
         return databaseHandler;
+    }
+
+    public EconomyHandler getEconomyHandler() {
+        return economyHandler;
     }
 
     public static TownshipCore getInstance() {
@@ -30,10 +36,19 @@ public final class TownshipCore extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        // Set up database and economy stuff
+        // Set up database
         databaseHandler = DatabaseHandler.getInstance();
         databaseHandler.init(this);
 
+
+        // Set up database tables and create economy
+        economyHandler = EconomyHandler.getInstance();
+        economyHandler.init(this, getDatabaseHandler());
+
+        boolean isEconomyTableCreated = economyHandler.createTable();
+        if (isEconomyTableCreated){
+            getLogger().log(Level.WARNING, "Created economy database table.");
+        }
 
         // Set up market handler and market items
         marketHandler = MarketHandler.getInstance();

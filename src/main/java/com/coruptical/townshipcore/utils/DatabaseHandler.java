@@ -3,9 +3,7 @@ import com.coruptical.townshipcore.TownshipCore;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.logging.Level;
 
 public class DatabaseHandler {
@@ -23,6 +21,7 @@ public class DatabaseHandler {
 
     }
 
+    // Main methods for interaction
     public void init(TownshipCore plugin){
         this.plugin = plugin;
 
@@ -38,14 +37,14 @@ public class DatabaseHandler {
             }
         }
 
-        // Test connections
-        connect();
-
-        closeConnection();
     }
 
-    public Connection getConnection(){
+    private Connection getDatabaseConnection(){
+        if (conn != null) return conn;
+
         try {
+            plugin.getLogger().log(Level.INFO,
+                    "Opened database connection.");
             return DriverManager.getConnection("jdbc:sqlite:" + databaseFile.getName());
         } catch (SQLException e) {
             e.printStackTrace();
@@ -56,10 +55,9 @@ public class DatabaseHandler {
         }
     }
 
-    public void connect(){
-        conn = getConnection();
-        plugin.getLogger().log(Level.INFO,
-                "Opened database connection.");
+    public Connection getConnection(){
+        conn = getDatabaseConnection();
+        return conn;
     }
 
     public boolean closeConnection(){
@@ -73,6 +71,24 @@ public class DatabaseHandler {
             plugin.getLogger().log(Level.SEVERE,
                     "Error caused while trying to close database connection.");
             return false;
+        }
+    }
+
+    // Utility methods and others
+    public boolean tableExists(Connection connection, String tableName) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "SELECT count(*) "
+            + "FROM information_scheme.tables "
+            + "WHERE table_name = ?"
+            + "LIMIT 1;");
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt(1) != 0;
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "There was an internal error while checking while a database table exists...");
+            throw new RuntimeException(e);
         }
     }
 }
