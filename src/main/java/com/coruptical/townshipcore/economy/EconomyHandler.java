@@ -41,7 +41,7 @@ public class EconomyHandler {
             );
             statement.execute(sql);
 
-            plugin.getLogger().log(Level.WARNING, "Created Player_Economy database table.");
+            plugin.getLogger().log(Level.WARNING, "Created " + TABLE_NAME + " database table.");
         } catch (SQLException e) {
             plugin.getLogger().log(Level.SEVERE, "There was an error while creating the economy database table.");
             throw new RuntimeException(e);

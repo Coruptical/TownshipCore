@@ -79,7 +79,7 @@ public class DatabaseHandler {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT count(*) "
-            + "FROM information_scheme.tables "
+            + "FROM information_schema.tables "
             + "WHERE table_name = ?"
             + "LIMIT 1;");
 

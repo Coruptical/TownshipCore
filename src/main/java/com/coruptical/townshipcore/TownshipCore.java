@@ -40,7 +40,6 @@ public final class TownshipCore extends JavaPlugin {
         databaseHandler = DatabaseHandler.getInstance();
         databaseHandler.init(this);
 
-
         // Set up database tables and create economy
         economyHandler = EconomyHandler.getInstance();
         economyHandler.init(this, getDatabaseHandler());
