@@ -31,19 +31,17 @@ public class EconomyHandler {
     public void createTable(){
         Connection connection = databaseHandler.getConnection();
 
-        try {
-            Statement statement = connection.createStatement();
-            String sql = String.format(
-                    "CREATE TABLE IF NOT EXISTS %s (UUID varchar(255), " +
-                            "displayName varchar(255), " +
-                            "balance FLOAT)",
-                    TABLE_NAME
-            );
-            statement.execute(sql);
+        String parameters = "UUID varchar(255), " +
+                        "displayName varchar(255), " +
+                        "balance DOUBLE";
+        boolean isCreated = databaseHandler.createTable(connection, TABLE_NAME, parameters);
+        if (isCreated){
+            plugin.getLogger().log(Level.WARNING, "Created player economy table in database.");
+        }
 
-            plugin.getLogger().log(Level.WARNING, "Created " + TABLE_NAME + " database table.");
+        try {
+            connection.close();
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, "There was an error while creating the economy database table.");
             throw new RuntimeException(e);
         }
     }

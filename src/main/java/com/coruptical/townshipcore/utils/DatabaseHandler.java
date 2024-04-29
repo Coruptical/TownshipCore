@@ -7,11 +7,15 @@ import java.sql.*;
 import java.util.logging.Level;
 
 public class DatabaseHandler {
-    private TownshipCore plugin = null;
-    private static final DatabaseHandler instance = new DatabaseHandler();
+    // Constants
     private static final String DB_NAME = "data";
-    private File databaseFile = null;
+    private final String TABLEINFOSCHEMA_TABLENAME = "table_information_schema";
+    private static final DatabaseHandler instance = new DatabaseHandler();
+
+    // Need to be set
     Connection conn = null;
+    private TownshipCore plugin = null;
+    private File databaseFile = null;
 
     public static DatabaseHandler getInstance() {
         return instance;
@@ -35,6 +39,7 @@ public class DatabaseHandler {
             } catch (IOException e) {
                 plugin.getLogger().log(Level.SEVERE, "Failed to create data.db file!");
             }
+            createTableSchemaTable();
         }
 
     }
@@ -60,26 +65,12 @@ public class DatabaseHandler {
         return conn;
     }
 
-    public boolean closeConnection(){
-        try {
-            conn.close();
-            conn = null;
-            plugin.getLogger().log(Level.INFO, "Closed database connection.");
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            plugin.getLogger().log(Level.SEVERE,
-                    "Error caused while trying to close database connection.");
-            return false;
-        }
-    }
-
     // Utility methods and others
     public boolean tableExists(Connection connection, String tableName) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT count(*) "
-            + "FROM information_schema.tables "
+            + "FROM " + TABLEINFOSCHEMA_TABLENAME
             + "WHERE table_name = ?"
             + "LIMIT 1;");
 
@@ -88,6 +79,42 @@ public class DatabaseHandler {
             return resultSet.getInt(1) != 0;
         } catch (SQLException e) {
             plugin.getLogger().log(Level.SEVERE, "There was an internal error while checking while a database table exists...");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean createTable(Connection connection, String tableName, String parameters) {
+        if (tableExists(connection, tableName)){
+            return false;
+        }
+
+        try {
+            Statement statement = connection.createStatement();
+            String sql = String.format(
+                    "CREATE TABLE %s ( " + parameters + " ); INSERT INTO %s (table_name) VALUES(%s)",
+                    tableName, TABLEINFOSCHEMA_TABLENAME, tableName
+            );
+            statement.execute(sql);
+            return true;
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "There was an error while creating the table schema database table.");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void createTableSchemaTable () {
+        Connection connection = getConnection();
+
+        try {
+            Statement statement = connection.createStatement();
+            String sql = String.format(
+                    "CREATE TABLE IF NOT EXISTS %s (id int NOT_NULL AUTO_INCREMENT, " +
+                            "table_name, ",
+                    TABLEINFOSCHEMA_TABLENAME
+            );
+            statement.execute(sql);
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "There was an error while creating the table schema database table.");
             throw new RuntimeException(e);
         }
     }
