@@ -36,10 +36,10 @@ public class DatabaseHandler {
             databaseFile.getParentFile().mkdirs();
             try {
                 databaseFile.createNewFile();
+                createTableSchemaTable();
             } catch (IOException e) {
                 plugin.getLogger().log(Level.SEVERE, "Failed to create data.db file!");
             }
-            createTableSchemaTable();
         }
 
     }
@@ -48,9 +48,9 @@ public class DatabaseHandler {
         if (conn != null) return conn;
 
         try {
-            plugin.getLogger().log(Level.INFO,
-                    "Opened database connection.");
-            return DriverManager.getConnection("jdbc:sqlite:" + databaseFile.getName());
+            String databaseFilePath = "jdbc:sqlite:"
+                    + plugin.getDataFolder().getAbsolutePath() + "/" + DB_NAME+".db";
+            return DriverManager.getConnection(databaseFilePath);
         } catch (SQLException e) {
             e.printStackTrace();
             plugin.getLogger().log(Level.SEVERE,
@@ -68,11 +68,10 @@ public class DatabaseHandler {
     // Utility methods and others
     public boolean tableExists(Connection connection, String tableName) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT count(*) "
-            + "FROM " + TABLEINFOSCHEMA_TABLENAME
-            + "WHERE table_name = ?"
-            + "LIMIT 1;");
+            String sql = String.format("SELECT id FROM %s WHERE TableName=\"%s\"",
+                    TABLEINFOSCHEMA_TABLENAME, tableName);
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
@@ -90,11 +89,15 @@ public class DatabaseHandler {
 
         try {
             Statement statement = connection.createStatement();
-            String sql = String.format(
-                    "CREATE TABLE %s ( " + parameters + " ); INSERT INTO %s (table_name) VALUES(%s)",
+            String sqlCreate = String.format(
+                    "CREATE TABLE %s ( " + parameters + " )",
                     tableName, TABLEINFOSCHEMA_TABLENAME, tableName
             );
-            statement.execute(sql);
+            statement.execute(sqlCreate);
+
+            String sqlInsertTable = String.format("INSERT INTO %s (TableName) VALUES(\"%s\")",
+                    TABLEINFOSCHEMA_TABLENAME, tableName);
+            statement.execute(sqlInsertTable);
             return true;
         } catch (SQLException e) {
             plugin.getLogger().log(Level.SEVERE, "There was an error while creating the table schema database table.");
@@ -108,8 +111,8 @@ public class DatabaseHandler {
         try {
             Statement statement = connection.createStatement();
             String sql = String.format(
-                    "CREATE TABLE IF NOT EXISTS %s (id int NOT_NULL AUTO_INCREMENT, " +
-                            "table_name, ",
+                    "CREATE TABLE IF NOT EXISTS %s (id INTEGER NOT NULL PRIMARY KEY, " +
+                            "TableName VARCHAR(255))",
                     TABLEINFOSCHEMA_TABLENAME
             );
             statement.execute(sql);
