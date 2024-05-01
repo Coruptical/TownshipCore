@@ -31,8 +31,7 @@ public class EconomyHandler {
     public void createTable(){
         Connection connection = databaseHandler.getConnection();
 
-        String parameters = "UUID varchar(255), " +
-                        "displayName varchar(255), " +
+        String parameters = "UUID varchar(255) NOT NULL PRIMARY KEY, " +
                         "balance DOUBLE";
         boolean isCreated = databaseHandler.createTable(connection, TABLE_NAME, parameters);
         if (isCreated){
