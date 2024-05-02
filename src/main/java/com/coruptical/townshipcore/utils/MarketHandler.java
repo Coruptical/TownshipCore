@@ -59,7 +59,6 @@ public class MarketHandler {
 
         FileConfiguration config = getCustomConfig();
         List<String> itemPathNames = config.getStringList("items");
-        plugin.getLogger().log(Level.INFO, itemPathNames.toString());
 
         for (String itemPath : itemPathNames){
             String itemName = config.getString(String.format(

@@ -50,12 +50,12 @@ public class DatabaseHandler {
         try {
             String databaseFilePath = "jdbc:sqlite:"
                     + plugin.getDataFolder().getAbsolutePath() + "/" + DB_NAME+".db";
-            return DriverManager.getConnection(databaseFilePath);
+            conn = DriverManager.getConnection(databaseFilePath);
+            return conn;
         } catch (SQLException e) {
             e.printStackTrace();
             plugin.getLogger().log(Level.SEVERE,
                     "Error while getting database connection.");
-
             return null;
         }
     }

@@ -4,6 +4,8 @@ import com.coruptical.townshipcore.economy.EconomyHandler;
 import com.coruptical.townshipcore.models.MarketItem;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
 import com.coruptical.townshipcore.utils.MarketHandler;
+import com.coruptical.townshipcore.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -53,13 +55,8 @@ public final class TownshipCore extends JavaPlugin {
 
         marketItemMap = marketHandler.getMarketItems();
 
-        for (String key : marketItemMap.keySet()){
-            MarketItem item = marketItemMap.get(key);
-            getLogger().log(Level.INFO, String.format(
-                    "%s: %s",
-                    key, item
-            ));
-        }
+        // Setup listeners
+        Utils.registerListeners(this);
     }
 
     @Override
