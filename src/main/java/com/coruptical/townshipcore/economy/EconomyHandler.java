@@ -75,7 +75,7 @@ public class EconomyHandler implements Listener {
         }
     }
 
-    private boolean hasPlayedBefore(Connection connection, String uuid){
+    public boolean hasPlayedBefore(Connection connection, String uuid){
         try {
             String sql = String.format("SELECT id FROM %s WHERE UUID=\"%s\"",
                     PLAYED_BEFORE_TABLE_NAME, uuid);
