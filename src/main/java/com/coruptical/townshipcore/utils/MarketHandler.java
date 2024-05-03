@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
 
 import com.coruptical.townshipcore.TownshipCore;
 import com.coruptical.townshipcore.models.MarketItem;

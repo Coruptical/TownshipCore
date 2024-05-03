@@ -1,8 +1,11 @@
 package com.coruptical.townshipcore.economy.commands;
 
+import com.coruptical.townshipcore.economy.EconomyHandler;
+import com.coruptical.townshipcore.utils.DatabaseHandler;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
+import java.sql.Connection;
 import java.util.List;
 
 public class BalanceCommand implements CommandExecutor, TabCompleter {
@@ -16,7 +19,18 @@ public class BalanceCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
 
+            Connection connection = DatabaseHandler.getInstance().getConnection();
+            String playerName = args[0].toLowerCase();
 
+            String uuid = EconomyHandler.getInstance().getUUIDFromName(connection, playerName);
+            if (uuid == null){
+                sender.sendMessage("This player has not played before.");
+                return true;
+            }
+
+            double balance = EconomyHandler.getInstance().getBalance(uuid);
+            sender.sendMessage(String.format("%s's balance: %.2f",
+                    playerName, balance));
         } else if (sender instanceof Player){
 
         }

@@ -1,7 +1,5 @@
 package com.coruptical.townshipcore.utils;
 
-import com.coruptical.townshipcore.TownshipCore;
-import com.coruptical.townshipcore.economy.EconomyHandler;
 import com.coruptical.townshipcore.models.UUIDResponse;
 import com.google.gson.Gson;
 
