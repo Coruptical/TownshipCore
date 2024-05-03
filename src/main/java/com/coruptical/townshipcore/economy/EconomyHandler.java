@@ -92,6 +92,7 @@ public class EconomyHandler implements Listener {
             return resultSet.getString(1);
         } catch (SQLException e){
             plugin.getLogger().log(Level.SEVERE, "Error while getting player UUID from name in database.");
+            throw new RuntimeException(e);
         }
     }
 
