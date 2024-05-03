@@ -2,6 +2,7 @@ package com.coruptical.townshipcore.economy;
 
 import com.coruptical.townshipcore.economy.commands.BalanceCommand;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
+import jdk.vm.ci.meta.Local;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,6 +10,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.*;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.logging.Level;
 
 public class EconomyHandler implements Listener {
@@ -56,7 +62,8 @@ public class EconomyHandler implements Listener {
         Connection connection = databaseHandler.getConnection();
 
         String parameters = "UUID varchar(255) NOT NULL PRIMARY KEY, " +
-                "name varchar(255)";
+                "name varchar(255), "
+                + "JoinTimestamp varchar(255)";
         boolean isCreated = databaseHandler.createTable(connection, NAMEUUID_TABLE_NAME, parameters);
         if (isCreated){
             plugin.getLogger().log(Level.WARNING, "Created name-uuid table in database.");
@@ -120,17 +127,30 @@ public class EconomyHandler implements Listener {
 
     }
 
-    // Add player to economy table when they first join.
+
+    // Add player to economy table when they first join,
+    // and add to uuid-name table in async manner.
     @EventHandler
-    private void onFirstJoin(PlayerJoinEvent e){
+    private void onJoin(PlayerJoinEvent e){
         Connection connection = databaseHandler.getConnection();
         Player p = e.getPlayer();
+        LocalDateTime localDateTime = LocalDateTime.now();
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
+        String formattedTimestamp = localDateTime.format(timeFormatter);
+
+
+        // Insert into has played before and insert into uuid-name table
+        // or update the name into the uuid
         if (!hasPlayedBefore(connection, p.getUniqueId().toString())){
 
             String sqlInsertIntoEconomy = String.format("INSERT INTO %s(UUID, balance) VALUES(?, ?)", TABLE_NAME);
             String sqlInsertIntoPlayedBefore = String.format(
                     "INSERT INTO %s(UUID) VALUES (\"%s\")",
                     PLAYED_BEFORE_TABLE_NAME, p.getUniqueId());
+            String sqlInsertIntoUUIDName = String.format(
+                    "INSERT INTO %s(name, JoinTimestamp) VALUES(?, ?)",
+                    NAMEUUID_TABLE_NAME);
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(sqlInsertIntoEconomy);
                 preparedStatement.setString(1, p.getUniqueId().toString());
@@ -139,9 +159,25 @@ public class EconomyHandler implements Listener {
 
                 preparedStatement = connection.prepareStatement(sqlInsertIntoPlayedBefore);
                 preparedStatement.executeUpdate();
+
+                preparedStatement = connection.prepareStatement(sqlInsertIntoUUIDName);
+                preparedStatement.setString(1, p.getName());
+                preparedStatement.setString(2, formattedTimestamp);
             } catch (SQLException exception) {
                 plugin.getLogger().log(Level.SEVERE, "Error on player join creating player balance.");
                 throw new RuntimeException(exception);
+            }
+        } else{
+            String sqlUpdate = String.format("UPDATE %s SET name=?, JoinTimestamp=? WHERE UUID=?",
+                    NAMEUUID_TABLE_NAME);
+            try {
+                PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate);
+                preparedStatement.setString(1, p.getName());
+                preparedStatement.setString(2, formattedTimestamp);
+                preparedStatement.setString(3, p.getUniqueId().toString());
+                preparedStatement.executeUpdate();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
             }
         }
     }
