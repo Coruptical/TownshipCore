@@ -11,7 +11,4 @@ public class Utils {
         return Double.parseDouble(roundedString);
     }
 
-    public static void registerListeners(TownshipCore plugin){
-        plugin.getServer().getPluginManager().registerEvents(EconomyHandler.getInstance(), plugin);
-    }
 }

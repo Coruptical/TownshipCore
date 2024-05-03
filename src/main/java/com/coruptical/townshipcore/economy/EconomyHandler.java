@@ -1,5 +1,6 @@
 package com.coruptical.townshipcore.economy;
 
+import com.coruptical.townshipcore.economy.commands.BalanceCommand;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,6 +17,7 @@ public class EconomyHandler implements Listener {
     private DatabaseHandler databaseHandler;
     private final String TABLE_NAME = "Player_Economy";
     private final String PLAYED_BEFORE_TABLE_NAME = "Player_PlayedBefore";
+    public static final String ENUM_PREFIX = "economyhandler.";
 
     public static EconomyHandler getInstance() {
         return instance;
@@ -29,6 +31,7 @@ public class EconomyHandler implements Listener {
         this.plugin = plugin;
         this.databaseHandler = databaseHandler;
         createPlayedBeforeTable();
+        registerAll();
     }
 
     // TODO: Make it so we don't output logger message if table already exists.
@@ -44,43 +47,11 @@ public class EconomyHandler implements Listener {
 
     }
 
-    public double getBalance(String playerUUID){
-        Connection connection = databaseHandler.getConnection();
-
-        String sql = String.format("SELECT balance FROM %s WHERE UUID=?", TABLE_NAME);
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, playerUUID);
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            return resultSet.getDouble(1);
-        } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, "Error while trying to fetch player balance.");
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void setBalance(String playerUUID, double balance){
-        Connection connection = databaseHandler.getConnection();
-
-        String sql = String.format("UPDATE %s SET balance=? WHERE UUID=?", TABLE_NAME);
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setDouble(1, balance);
-            preparedStatement.setString(2, playerUUID);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, "Error while trying to set player balance.");
-            throw new RuntimeException(e);
-        }
-
-    }
 
     // Add player to economy table when they first join.
     // TODO: Add to player played before table
     @EventHandler
-    public void onFirstJoin(PlayerJoinEvent e){
+    private void onFirstJoin(PlayerJoinEvent e){
         Connection connection = databaseHandler.getConnection();
         Player p = e.getPlayer();
         if (!hasPlayedBefore(connection, p.getUniqueId().toString())){
@@ -88,7 +59,7 @@ public class EconomyHandler implements Listener {
             String sqlInsertIntoEconomy = String.format("INSERT INTO %s(UUID, balance) VALUES(?, ?)", TABLE_NAME);
             String sqlInsertIntoPlayedBefore = String.format(
                     "INSERT INTO %s(UUID) VALUES (\"%s\")",
-                    PLAYED_BEFORE_TABLE_NAME, p.getUniqueId().toString());
+                    PLAYED_BEFORE_TABLE_NAME, p.getUniqueId());
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(sqlInsertIntoEconomy);
                 preparedStatement.setString(1, p.getUniqueId().toString());
@@ -130,6 +101,52 @@ public class EconomyHandler implements Listener {
         if (isCreated){
             plugin.getLogger().log(Level.WARNING, "Created has played before table in database.");
         }
+    }
+
+    // Other utility methods
+    private void registerAll(){
+        // Register events
+        plugin.getServer().getPluginManager().registerEvents(EconomyHandler.getInstance(), plugin);
+
+        // Register commands
+        BalanceCommand balanceCommand = new BalanceCommand();
+        plugin.getCommand("balance").setExecutor(balanceCommand);
+        plugin.getCommand("balance").setTabCompleter(balanceCommand);
+
+    }
+
+    // Front-end methods
+    public double getBalance(String playerUUID){
+        Connection connection = databaseHandler.getConnection();
+
+        String sql = String.format("SELECT balance FROM %s WHERE UUID=?", TABLE_NAME);
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, playerUUID);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getDouble(1);
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Error while trying to fetch player balance.");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setBalance(String playerUUID, double balance){
+        Connection connection = databaseHandler.getConnection();
+
+        String sql = String.format("UPDATE %s SET balance=? WHERE UUID=?", TABLE_NAME);
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setDouble(1, balance);
+            preparedStatement.setString(2, playerUUID);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Error while trying to set player balance.");
+            throw new RuntimeException(e);
+        }
+
     }
 
 }

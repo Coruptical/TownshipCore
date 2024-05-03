@@ -2,3 +2,6 @@ name: TownshipCore
 version: '${project.version}'
 main: com.coruptical.townshipcore.TownshipCore
 api-version: '1.20'
+commands:
+  balance:
+    description: Acquire your or someone else's balance.

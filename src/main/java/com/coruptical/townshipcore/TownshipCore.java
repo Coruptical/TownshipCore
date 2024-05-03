@@ -54,9 +54,6 @@ public final class TownshipCore extends JavaPlugin {
         marketHandler.createCustomConfig();
 
         marketItemMap = marketHandler.getMarketItems();
-
-        // Setup listeners
-        Utils.registerListeners(this);
     }
 
     @Override
