@@ -18,6 +18,7 @@ public class EconomyHandler implements Listener {
     private final String TABLE_NAME = "Player_Economy";
     private final String PLAYED_BEFORE_TABLE_NAME = "Player_PlayedBefore";
     public static final String ENUM_PREFIX = "economyhandler.";
+    private final String NAMEUUID_TABLE_NAME = "NameUUID";
 
     public static EconomyHandler getInstance() {
         return instance;
@@ -30,12 +31,17 @@ public class EconomyHandler implements Listener {
     public void init(JavaPlugin plugin, DatabaseHandler databaseHandler){
         this.plugin = plugin;
         this.databaseHandler = databaseHandler;
+
+        // Create our tables
         createPlayedBeforeTable();
+        createNameUUIDTable();
+        createPlayerEconomyTable();
+
+        // Register commands and listeners
         registerAll();
     }
 
-    // TODO: Make it so we don't output logger message if table already exists.
-    public void createTable(){
+    public void createPlayerEconomyTable(){
         Connection connection = databaseHandler.getConnection();
 
         String parameters = "UUID varchar(255) NOT NULL PRIMARY KEY, " +
@@ -44,36 +50,19 @@ public class EconomyHandler implements Listener {
         if (isCreated){
             plugin.getLogger().log(Level.WARNING, "Created player economy table in database.");
         }
-
     }
 
-
-    // Add player to economy table when they first join.
-    // TODO: Add to player played before table
-    @EventHandler
-    private void onFirstJoin(PlayerJoinEvent e){
+    public void createNameUUIDTable(){
         Connection connection = databaseHandler.getConnection();
-        Player p = e.getPlayer();
-        if (!hasPlayedBefore(connection, p.getUniqueId().toString())){
 
-            String sqlInsertIntoEconomy = String.format("INSERT INTO %s(UUID, balance) VALUES(?, ?)", TABLE_NAME);
-            String sqlInsertIntoPlayedBefore = String.format(
-                    "INSERT INTO %s(UUID) VALUES (\"%s\")",
-                    PLAYED_BEFORE_TABLE_NAME, p.getUniqueId());
-            try {
-                PreparedStatement preparedStatement = connection.prepareStatement(sqlInsertIntoEconomy);
-                preparedStatement.setString(1, p.getUniqueId().toString());
-                preparedStatement.setDouble(2, 0);
-                preparedStatement.executeUpdate();
-
-                preparedStatement = connection.prepareStatement(sqlInsertIntoPlayedBefore);
-                preparedStatement.executeUpdate();
-            } catch (SQLException exception) {
-                plugin.getLogger().log(Level.SEVERE, "Error on player join creating player balance.");
-                throw new RuntimeException(exception);
-            }
+        String parameters = "UUID varchar(255) NOT NULL PRIMARY KEY, " +
+                "name varchar(255)";
+        boolean isCreated = databaseHandler.createTable(connection, NAMEUUID_TABLE_NAME, parameters);
+        if (isCreated){
+            plugin.getLogger().log(Level.WARNING, "Created name-uuid table in database.");
         }
     }
+
 
     public boolean hasPlayedBefore(Connection connection, String uuid){
         try {
@@ -88,6 +77,21 @@ public class EconomyHandler implements Listener {
         } catch (SQLException e) {
             plugin.getLogger().log(Level.SEVERE, "Error while checking if player has played before in database.");
             throw new RuntimeException(e);
+        }
+    }
+
+    public String getUUIDFromName(Connection connection, String name){
+        try {
+            String sql = String.format("SELECT UUID from %s WHERE name=\"%s\"",
+                    NAMEUUID_TABLE_NAME, name);
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getString(1);
+        } catch (SQLException e){
+            plugin.getLogger().log(Level.SEVERE, "Error while getting player UUID from name in database.");
         }
     }
 
@@ -114,6 +118,37 @@ public class EconomyHandler implements Listener {
         plugin.getCommand("balance").setTabCompleter(balanceCommand);
 
     }
+
+    // Add player to economy table when they first join.
+    @EventHandler
+    private void onFirstJoin(PlayerJoinEvent e){
+        Connection connection = databaseHandler.getConnection();
+        Player p = e.getPlayer();
+        if (!hasPlayedBefore(connection, p.getUniqueId().toString())){
+
+            String sqlInsertIntoEconomy = String.format("INSERT INTO %s(UUID, balance) VALUES(?, ?)", TABLE_NAME);
+            String sqlInsertIntoPlayedBefore = String.format(
+                    "INSERT INTO %s(UUID) VALUES (\"%s\")",
+                    PLAYED_BEFORE_TABLE_NAME, p.getUniqueId());
+            try {
+                PreparedStatement preparedStatement = connection.prepareStatement(sqlInsertIntoEconomy);
+                preparedStatement.setString(1, p.getUniqueId().toString());
+                preparedStatement.setDouble(2, 0);
+                preparedStatement.executeUpdate();
+
+                preparedStatement = connection.prepareStatement(sqlInsertIntoPlayedBefore);
+                preparedStatement.executeUpdate();
+            } catch (SQLException exception) {
+                plugin.getLogger().log(Level.SEVERE, "Error on player join creating player balance.");
+                throw new RuntimeException(exception);
+            }
+        }
+    }
+
+
+
+
+
 
     // Front-end methods
     public double getBalance(String playerUUID){

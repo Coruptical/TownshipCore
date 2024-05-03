@@ -4,12 +4,9 @@ import com.coruptical.townshipcore.economy.EconomyHandler;
 import com.coruptical.townshipcore.models.MarketItem;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
 import com.coruptical.townshipcore.utils.MarketHandler;
-import com.coruptical.townshipcore.utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
-import java.util.logging.Level;
 
 public final class TownshipCore extends JavaPlugin {
     private static TownshipCore instance;
@@ -45,8 +42,6 @@ public final class TownshipCore extends JavaPlugin {
         // Set up database tables and create economy
         economyHandler = EconomyHandler.getInstance();
         economyHandler.init(this, getDatabaseHandler());
-
-        economyHandler.createTable();
 
         // Set up market handler and market items
         marketHandler = MarketHandler.getInstance();
