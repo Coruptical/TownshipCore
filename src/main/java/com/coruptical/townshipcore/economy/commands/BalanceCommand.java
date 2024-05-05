@@ -2,7 +2,7 @@ package com.coruptical.townshipcore.economy.commands;
 
 import com.coruptical.townshipcore.TownshipCore;
 import com.coruptical.townshipcore.economy.EconomyHandler;
-import com.coruptical.townshipcore.economy.EconomyPermissions;
+import com.coruptical.townshipcore.economy.enums.EconomyPermissions;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
 import com.coruptical.townshipcore.utils.Utils;
 import org.bukkit.command.*;
@@ -15,8 +15,6 @@ public class BalanceCommand implements CommandExecutor, TabCompleter {
     private final TownshipCore plugin = TownshipCore.getInstance();
 
     @Override
-    // TODO: Use mojang api to get uuid, and if doesn't exist say in both cases.
-    // TODO: Save name to uuid in database and update this every time a player joins in an async manner.
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof ConsoleCommandSender){
             if (args.length == 0) {
@@ -51,7 +49,7 @@ public class BalanceCommand implements CommandExecutor, TabCompleter {
                 String uuid = EconomyHandler.getInstance().getUUIDFromName(connection, p.getName());
 
                 double balance = EconomyHandler.getInstance().getBalance(uuid);
-                p.sendMessage(Utils.pColor(String.format("&aYour balance: &f£%.2f",
+                p.sendMessage(Utils.pColor(String.format("&aYour balance: &f$%.2f",
                         balance)));
 
                 return true;

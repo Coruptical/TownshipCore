@@ -1,7 +1,9 @@
 package com.coruptical.townshipcore.economy;
 
 import com.coruptical.townshipcore.economy.commands.BalanceCommand;
+import com.coruptical.townshipcore.economy.commands.EconomyCommand;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
+import com.coruptical.townshipcore.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,6 +13,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 public class EconomyHandler implements Listener {
@@ -50,7 +54,7 @@ public class EconomyHandler implements Listener {
                         "balance DOUBLE";
         boolean isCreated = databaseHandler.createTable(connection, TABLE_NAME, parameters);
         if (isCreated){
-            plugin.getLogger().log(Level.WARNING, "Created player economy table in database.");
+            plugin.getLogger().log(Level.INFO, "Created player economy table in database.");
         }
     }
 
@@ -63,7 +67,7 @@ public class EconomyHandler implements Listener {
                 + "JoinTimestamp varchar(255)";
         boolean isCreated = databaseHandler.createTable(connection, NAMEUUID_TABLE_NAME, parameters);
         if (isCreated){
-            plugin.getLogger().log(Level.WARNING, "Created name-uuid table in database.");
+            plugin.getLogger().log(Level.INFO, "Created name-uuid table in database.");
         }
     }
 
@@ -87,7 +91,7 @@ public class EconomyHandler implements Listener {
     public String getUUIDFromName(Connection connection, String name){
         try {
             String sql = String.format("SELECT UUID from %s WHERE CheckName=\"%s\"",
-                    NAMEUUID_TABLE_NAME, name);
+                    NAMEUUID_TABLE_NAME, name.toLowerCase());
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
@@ -108,7 +112,7 @@ public class EconomyHandler implements Listener {
                 "UUID varchar(255)";
         boolean isCreated = databaseHandler.createTable(connection, PLAYED_BEFORE_TABLE_NAME, parameters);
         if (isCreated){
-            plugin.getLogger().log(Level.WARNING, "Created has played before table in database.");
+            plugin.getLogger().log(Level.INFO, "Created has played before table in database.");
         }
     }
 
@@ -121,6 +125,10 @@ public class EconomyHandler implements Listener {
         BalanceCommand balanceCommand = new BalanceCommand();
         plugin.getCommand("balance").setExecutor(balanceCommand);
         plugin.getCommand("balance").setTabCompleter(balanceCommand);
+
+        EconomyCommand economyCommand = new EconomyCommand();
+        plugin.getCommand("economy").setExecutor(economyCommand);
+        plugin.getCommand("economy").setTabCompleter(economyCommand);
 
     }
 
@@ -219,7 +227,38 @@ public class EconomyHandler implements Listener {
             plugin.getLogger().log(Level.SEVERE, "Error while trying to set player balance.");
             throw new RuntimeException(e);
         }
+    }
 
+    public String[] getAllPlayerUUIDS(){
+        Connection connection = databaseHandler.getConnection();
+        ArrayList<String> uuids = new ArrayList<>();
+
+        String sql = String.format("SELECT UUID FROM %s", TABLE_NAME);
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()){
+                uuids.add(resultSet.getString(1));
+            }
+            return uuids.toArray(new String[0]);
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Error while trying to fetch all player uuids.");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setAllBalance(double balance){
+        Connection connection = databaseHandler.getConnection();
+
+        String sql = String.format("UPDATE %s SET balance=%.2f", TABLE_NAME, Utils.round(balance));
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Error while trying to fetch all player uuids.");
+            throw new RuntimeException(e);
+        }
     }
 
 }
