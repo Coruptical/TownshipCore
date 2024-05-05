@@ -56,6 +56,14 @@ public final class TownshipCore extends JavaPlugin {
 
     }
 
+    public String getPrefix(){
+        return getConfig().getString("Plugin_Prefix");
+    }
+
+    public String getNoPermissionMessage(){
+        return getConfig().getString("NoPermissionMessage");
+    }
+
     public MarketHandler getMarketHandler(){
         return marketHandler;
     }

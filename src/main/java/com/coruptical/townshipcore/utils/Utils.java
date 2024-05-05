@@ -1,7 +1,9 @@
 package com.coruptical.townshipcore.utils;
 
+import com.coruptical.townshipcore.TownshipCore;
 import com.coruptical.townshipcore.models.UUIDResponse;
 import com.google.gson.Gson;
+import org.bukkit.ChatColor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -45,5 +47,14 @@ public class Utils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String color(String msg){
+        return ChatColor.translateAlternateColorCodes('&', msg);
+    }
+
+    public static String pColor(String msg) {
+        return ChatColor.translateAlternateColorCodes('&',
+                TownshipCore.getInstance().getPrefix() + msg);
     }
 }

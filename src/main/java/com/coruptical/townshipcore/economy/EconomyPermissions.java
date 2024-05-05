@@ -3,13 +3,13 @@ package com.coruptical.townshipcore.economy;
 public enum EconomyPermissions {
     BALANCE(EconomyHandler.ENUM_PREFIX + "balance");
 
-    private static String name;
+    private final String name;
+
+    public String getName() {
+        return name;
+    }
 
     EconomyPermissions(String name){
-
-    };
-
-    public static String getName() {
-        return name;
+        this.name = name;
     }
 }
