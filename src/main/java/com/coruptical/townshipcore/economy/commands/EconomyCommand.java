@@ -9,7 +9,6 @@ import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
 import java.sql.Connection;
-import java.util.Arrays;
 import java.util.List;
 
 public class EconomyCommand implements CommandExecutor, TabCompleter {
@@ -59,12 +58,27 @@ public class EconomyCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
+        if (!(cmdOption.equalsIgnoreCase("set") ||
+                cmdOption.equalsIgnoreCase("add") ||
+                cmdOption.equalsIgnoreCase("take"))){
+            sender.sendMessage(Utils.pColor(USAGE_MESSAGE));
+            return;
+        }
+
         if (cmdOption.equalsIgnoreCase("set") && playerName.equals("*")){
             handleSetAll(sender, value);
             return;
         }
 
-        // TODO: Make * wild card work for add and take.
+        if  (cmdOption.equalsIgnoreCase("take") && playerName.equals("*")){
+            handleTakeAll(sender, value);
+            return;
+        }
+
+        if (cmdOption.equalsIgnoreCase("add") && playerName.equalsIgnoreCase("*")){
+            handleAddAll(sender, value);
+            return;
+        }
 
         String targetUUID = EconomyHandler.getInstance().getUUIDFromName(connection, playerName);
         if (targetUUID == null){
@@ -74,12 +88,22 @@ public class EconomyCommand implements CommandExecutor, TabCompleter {
         handleOptions(sender, cmdOption, targetUUID, playerName, value);
     }
 
-    public void handleSetAll(CommandSender sender, double value){
+    private void handleSetAll(CommandSender sender, double value){
         EconomyHandler.getInstance().setAllBalance(value);
         sender.sendMessage(Utils.pColor(String.format("&aSuccessfully set all players' balance to &f%.2f.", Utils.round(value))));
     }
 
-    public void handleOptions(CommandSender sender, String cmdOption, String targetUUID, String playerName, double value){
+    private void handleTakeAll(CommandSender sender, double value){
+        EconomyHandler.getInstance().takeAllBalance(value);
+        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully taken &f%.2f from all player's balance.", Utils.round(value))));
+    }
+
+    private void handleAddAll(CommandSender sender, double value){
+        EconomyHandler.getInstance().addAllBalance(value);
+        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully added &f%.2f to all player's balance.", Utils.round(value))));
+    }
+
+    private void handleOptions(CommandSender sender, String cmdOption, String targetUUID, String playerName, double value){
         if (cmdOption.equalsIgnoreCase("set")){
             EconomyHandler.getInstance().setBalance(targetUUID, value);
             sender.sendMessage(Utils.pColor(String.format("&aSuccessfully set %s's balance to $&f%.2f.", playerName, value)));

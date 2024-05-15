@@ -1,6 +1,7 @@
 package com.coruptical.townshipcore.economy;
 
 import com.coruptical.townshipcore.economy.commands.BalanceCommand;
+import com.coruptical.townshipcore.economy.commands.BalanceTopCommand;
 import com.coruptical.townshipcore.economy.commands.EconomyCommand;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
 import com.coruptical.townshipcore.utils.Utils;
@@ -130,6 +131,9 @@ public class EconomyHandler implements Listener {
         plugin.getCommand("economy").setExecutor(economyCommand);
         plugin.getCommand("economy").setTabCompleter(economyCommand);
 
+        BalanceTopCommand balanceTopCommand = new BalanceTopCommand();
+        plugin.getCommand("balancetop").setExecutor(balanceTopCommand);
+
     }
 
 
@@ -256,7 +260,33 @@ public class EconomyHandler implements Listener {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, "Error while trying to fetch all player uuids.");
+            plugin.getLogger().log(Level.SEVERE, "Error while trying to set all players' balance.");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void takeAllBalance(double balance){
+        Connection connection = databaseHandler.getConnection();
+
+        String sql = String.format("UPDATE %s SET balance=balance - %.2f", TABLE_NAME, Utils.round(balance));
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Error while trying to take all players' balance.");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void addAllBalance(double balance){
+        Connection connection = databaseHandler.getConnection();
+
+        String sql = String.format("UPDATE %s SET balance=balance + %.2f", TABLE_NAME, Utils.round(balance));
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Error while trying to add to all players' balance.");
             throw new RuntimeException(e);
         }
     }

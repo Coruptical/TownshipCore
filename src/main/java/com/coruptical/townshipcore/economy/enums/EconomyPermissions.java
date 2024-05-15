@@ -4,7 +4,8 @@ import com.coruptical.townshipcore.economy.EconomyHandler;
 
 public enum EconomyPermissions {
     BALANCE(EconomyHandler.ENUM_PREFIX + "balance"),
-    ECONOMY(EconomyHandler.ENUM_PREFIX + "economy");
+    ECONOMY(EconomyHandler.ENUM_PREFIX + "economy"),
+    BALANCETOP(EconomyHandler.ENUM_PREFIX + "balancetop");
 
     private final String name;
 
