@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.logging.Level;
 
 public class EconomyHandler implements Listener {
@@ -285,6 +286,26 @@ public class EconomyHandler implements Listener {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Error while trying to add to all players' balance.");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public LinkedHashMap<String, Double> getBalanceTop(int pageNumber, int pageSize){
+        LinkedHashMap<String, Double> balanceTop = new LinkedHashMap<>();
+        Connection connection = databaseHandler.getConnection();
+
+        String sql = String.format("SELECT * FROM %s ORDER BY balance ASC LIMIT %s OFFSET %s", TABLE_NAME, pageSize, (pageNumber-1)*pageSize);
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()){
+                balanceTop.put(resultSet.getString(1), resultSet.getDouble(2));
+            }
+
+            return balanceTop;
         } catch (SQLException e) {
             plugin.getLogger().log(Level.SEVERE, "Error while trying to add to all players' balance.");
             throw new RuntimeException(e);

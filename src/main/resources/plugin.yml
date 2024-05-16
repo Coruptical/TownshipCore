@@ -9,3 +9,7 @@ commands:
     description: Manage economy of players.
     aliases:
       - eco
+  balancetop:
+    description: Get the balance top.
+    aliases:
+      - baltop

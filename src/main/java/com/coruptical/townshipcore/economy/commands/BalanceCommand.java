@@ -32,7 +32,7 @@ public class BalanceCommand implements CommandExecutor, TabCompleter {
             }
 
             double balance = EconomyHandler.getInstance().getBalance(uuid);
-            sender.sendMessage(String.format("%s's balance: %.2f",
+            sender.sendMessage(String.format("%s's balance: $%.2f",
                     playerName, balance));
         } else if (sender instanceof Player){
             Player p = (Player) sender;
