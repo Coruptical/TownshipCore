@@ -64,6 +64,6 @@ public class BalanceTopCommand implements CommandExecutor {
         }
 
         if (msg.length() > 0) msg.deleteCharAt(msg.length()-1);
-        sender.sendMessage(Utils.pColor(String.format("&aBalance top: \n%s", msg)));
+        sender.sendMessage(Utils.pColor(String.format("&aBalance top %s: \n%s", pageNumber, msg)));
     }
 }

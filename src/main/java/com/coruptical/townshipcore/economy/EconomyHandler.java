@@ -296,7 +296,7 @@ public class EconomyHandler implements Listener {
         LinkedHashMap<String, Double> balanceTop = new LinkedHashMap<>();
         Connection connection = databaseHandler.getConnection();
 
-        String sql = String.format("SELECT * FROM %s ORDER BY balance ASC LIMIT %s OFFSET %s", TABLE_NAME, pageSize, (pageNumber-1)*pageSize);
+        String sql = String.format("SELECT * FROM %s ORDER BY balance DESC LIMIT %s OFFSET %s", TABLE_NAME, pageSize, (pageNumber-1)*pageSize);
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
