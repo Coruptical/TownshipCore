@@ -4,10 +4,17 @@ import com.coruptical.townshipcore.TownshipCore;
 import com.coruptical.townshipcore.economy.EconomyHandler;
 import com.coruptical.townshipcore.economy.enums.EconomyPermissions;
 import com.coruptical.townshipcore.utils.Utils;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+
+import java.util.ArrayList;
 
 public class WithdrawCommand implements CommandExecutor {
     private final TownshipCore plugin = TownshipCore.getInstance();
@@ -59,7 +66,22 @@ public class WithdrawCommand implements CommandExecutor {
             return;
         }
 
+        ItemStack note = new ItemStack(Material.PAPER, 1);
+        ItemMeta meta = note.getItemMeta();
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
 
+        pdc.set(EconomyHandler.getInstance().getWithdrawNoteKey(), PersistentDataType.DOUBLE, amount);
+
+        meta.setDisplayName(Utils.color("&7[&6Banknote&7]"));
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(Utils.color(String.format("&aAmount: &f$%.2f", amount)));
+        lore.add(Utils.color("&7Right-click to redeem 1"));
+        lore.add(Utils.color("&7Shift + Right-click to redeem entire stack"));
+        meta.setLore(lore);
+
+        note.setItemMeta(meta);
+
+        p.getInventory().addItem(note);
         EconomyHandler.getInstance().setBalance(uuid, playersBalance - amount);
         p.sendMessage(Utils.pColor(String.format("&aSuccessfully withdrew &f$%.2f&a from your balance.", amount)));
     }

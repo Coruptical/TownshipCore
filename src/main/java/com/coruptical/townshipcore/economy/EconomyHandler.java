@@ -4,8 +4,10 @@ import com.coruptical.townshipcore.economy.commands.BalanceCommand;
 import com.coruptical.townshipcore.economy.commands.BalanceTopCommand;
 import com.coruptical.townshipcore.economy.commands.EconomyCommand;
 import com.coruptical.townshipcore.economy.commands.WithdrawCommand;
+import com.coruptical.townshipcore.economy.event.WithdrawNoteUseEvent;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
 import com.coruptical.townshipcore.utils.Utils;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,6 +30,7 @@ public class EconomyHandler implements Listener {
     private final String PLAYED_BEFORE_TABLE_NAME = "Player_PlayedBefore";
     public static final String ENUM_PREFIX = "economyhandler.";
     private final String NAMEUUID_TABLE_NAME = "NameUUID";
+    private NamespacedKey withdrawNoteKey;
 
     public static EconomyHandler getInstance() {
         return instance;
@@ -35,6 +38,10 @@ public class EconomyHandler implements Listener {
 
     private EconomyHandler () {
 
+    }
+
+    public NamespacedKey getWithdrawNoteKey() {
+        return withdrawNoteKey;
     }
 
     public void init(JavaPlugin plugin, DatabaseHandler databaseHandler){
@@ -48,6 +55,9 @@ public class EconomyHandler implements Listener {
 
         // Register commands and listeners
         registerAll();
+
+        // Create namespaced key for withdraw paper note
+        withdrawNoteKey = new NamespacedKey(plugin, "withdrawAmount");
     }
 
     public void createPlayerEconomyTable(){
@@ -123,6 +133,7 @@ public class EconomyHandler implements Listener {
     private void registerAll(){
         // Register events
         plugin.getServer().getPluginManager().registerEvents(EconomyHandler.getInstance(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new WithdrawNoteUseEvent(), plugin);
 
         // Register commands
         BalanceCommand balanceCommand = new BalanceCommand();
