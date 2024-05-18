@@ -5,6 +5,8 @@ api-version: '1.20'
 commands:
   balance:
     description: Acquire your or someone else's balance.
+    aliases:
+      - bal
   economy:
     description: Manage economy of players.
     aliases:
@@ -13,3 +15,5 @@ commands:
     description: Get the balance top.
     aliases:
       - baltop
+  withdraw:
+    description: Withdraw a part of your balance into a check

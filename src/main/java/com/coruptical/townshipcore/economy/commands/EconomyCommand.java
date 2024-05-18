@@ -13,7 +13,7 @@ import java.util.List;
 
 public class EconomyCommand implements CommandExecutor, TabCompleter {
     private final TownshipCore plugin = TownshipCore.getInstance();
-    private final String USAGE_MESSAGE = "&7Incorrect usage: /eco <set/add/take/set-all> <player> <value>";
+    private final String USAGE_MESSAGE = "&8Incorrect usage: &7/eco <set/add/take/set-all> <player> <value>";
 
     // Usage: /eco <set/add/take/set-all> <offline? player> <value>
     @Override
@@ -90,31 +90,31 @@ public class EconomyCommand implements CommandExecutor, TabCompleter {
 
     private void handleSetAll(CommandSender sender, double value){
         EconomyHandler.getInstance().setAllBalance(value);
-        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully set all players' balance to &f%.2f.", Utils.round(value))));
+        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully set all players' balance to &f$%.2f.", Utils.round(value))));
     }
 
     private void handleTakeAll(CommandSender sender, double value){
         EconomyHandler.getInstance().takeAllBalance(value);
-        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully taken &f%.2f from all player's balance.", Utils.round(value))));
+        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully taken &f$%.2f&a from all player's balance.", Utils.round(value))));
     }
 
     private void handleAddAll(CommandSender sender, double value){
         EconomyHandler.getInstance().addAllBalance(value);
-        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully added &f%.2f to all player's balance.", Utils.round(value))));
+        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully added &f$%.2f&a to all player's balance.", Utils.round(value))));
     }
 
     private void handleOptions(CommandSender sender, String cmdOption, String targetUUID, String playerName, double value){
         if (cmdOption.equalsIgnoreCase("set")){
             EconomyHandler.getInstance().setBalance(targetUUID, value);
-            sender.sendMessage(Utils.pColor(String.format("&aSuccessfully set %s's balance to $&f%.2f.", playerName, value)));
+            sender.sendMessage(Utils.pColor(String.format("&aSuccessfully set %s's balance to &f$%.2f.", playerName, value)));
         }
         else if (cmdOption.equalsIgnoreCase("add")){
             EconomyHandler.getInstance().setBalance(targetUUID, EconomyHandler.getInstance().getBalance(targetUUID) + value);
-            sender.sendMessage(Utils.pColor(String.format("&aSuccessfully added $&f%.2f to %s's balance.", value, playerName)));
+            sender.sendMessage(Utils.pColor(String.format("&aSuccessfully added &f$%.2f&a to %s's balance.", value, playerName)));
         }
         else if (cmdOption.equalsIgnoreCase("take")){
             EconomyHandler.getInstance().setBalance(targetUUID, EconomyHandler.getInstance().getBalance(targetUUID) - value);
-            sender.sendMessage(Utils.pColor(String.format("&aSuccessfully removed $&f%.2f from %s's balance.", value, playerName)));
+            sender.sendMessage(Utils.pColor(String.format("&aSuccessfully removed &f$%.2f&a from %s's balance.", value, playerName)));
         } else {
             sender.sendMessage(Utils.pColor(USAGE_MESSAGE));
         }

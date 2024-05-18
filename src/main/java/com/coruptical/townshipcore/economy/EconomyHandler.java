@@ -3,6 +3,7 @@ package com.coruptical.townshipcore.economy;
 import com.coruptical.townshipcore.economy.commands.BalanceCommand;
 import com.coruptical.townshipcore.economy.commands.BalanceTopCommand;
 import com.coruptical.townshipcore.economy.commands.EconomyCommand;
+import com.coruptical.townshipcore.economy.commands.WithdrawCommand;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
 import com.coruptical.townshipcore.utils.Utils;
 import org.bukkit.entity.Player;
@@ -134,6 +135,9 @@ public class EconomyHandler implements Listener {
 
         BalanceTopCommand balanceTopCommand = new BalanceTopCommand();
         plugin.getCommand("balancetop").setExecutor(balanceTopCommand);
+
+        WithdrawCommand withdrawCommand = new WithdrawCommand();
+        plugin.getCommand("withdraw").setExecutor(withdrawCommand);
 
     }
 

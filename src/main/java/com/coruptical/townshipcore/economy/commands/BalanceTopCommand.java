@@ -18,7 +18,7 @@ import java.util.logging.Level;
 
 public class BalanceTopCommand implements CommandExecutor {
     private final TownshipCore plugin = TownshipCore.getInstance();
-    private final String USAGE_MESSAGE = "&8Incorrect usage. /balancetop <?page>";
+    private final String USAGE_MESSAGE = "&8Incorrect usage. &7/balancetop <?page>";
     private final int BALANCES_PER_PAGE = 15;
 
     @Override
