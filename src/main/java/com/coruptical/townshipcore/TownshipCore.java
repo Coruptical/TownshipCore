@@ -41,7 +41,7 @@ public final class TownshipCore extends JavaPlugin {
 
         // Set up database tables and create economy
         economyHandler = EconomyHandler.getInstance();
-        economyHandler.init(this, getDatabaseHandler());
+        economyHandler.init(this, getDatabaseHandler(), getNoPermissionMessage());
 
         // Set up market handler and market items
         marketHandler = MarketHandler.getInstance();

@@ -4,16 +4,18 @@ main: com.coruptical.townshipcore.TownshipCore
 api-version: '1.20'
 commands:
   balance:
-    description: Acquire your or someone else's balance.
+    description: Acquire your or someone else's balance
     aliases:
       - bal
   economy:
-    description: Manage economy of players.
+    description: Manage economy of players
     aliases:
       - eco
   balancetop:
-    description: Get the balance top.
+    description: Get the balance top
     aliases:
       - baltop
   withdraw:
     description: Withdraw a part of your balance into a check
+  pay:
+    description: Pay an online user

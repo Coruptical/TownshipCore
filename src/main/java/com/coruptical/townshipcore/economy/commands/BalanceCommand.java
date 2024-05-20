@@ -12,8 +12,6 @@ import java.sql.Connection;
 import java.util.List;
 
 public class BalanceCommand implements CommandExecutor, TabCompleter {
-    private final TownshipCore plugin = TownshipCore.getInstance();
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof ConsoleCommandSender){
@@ -38,7 +36,7 @@ public class BalanceCommand implements CommandExecutor, TabCompleter {
             Player p = (Player) sender;
 
             if (!p.hasPermission(EconomyPermissions.BALANCE.getName())){
-                p.sendMessage(Utils.pColor(plugin.getNoPermissionMessage()));
+                p.sendMessage(Utils.pColor(EconomyHandler.getInstance().getNoPermissionMessage()));
                 return true;
             }
 

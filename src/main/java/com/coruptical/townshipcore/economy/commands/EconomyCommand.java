@@ -12,7 +12,6 @@ import java.sql.Connection;
 import java.util.List;
 
 public class EconomyCommand implements CommandExecutor, TabCompleter {
-    private final TownshipCore plugin = TownshipCore.getInstance();
     private final String USAGE_MESSAGE = "&8Incorrect usage: &7/eco <set/add/take/set-all> <player> <value>";
 
     // Usage: /eco <set/add/take/set-all> <offline? player> <value>
@@ -22,7 +21,7 @@ public class EconomyCommand implements CommandExecutor, TabCompleter {
             return true;
 
         if (!sender.hasPermission(EconomyPermissions.ECONOMY.getName())) {
-            sender.sendMessage(Utils.pColor(plugin.getNoPermissionMessage()));
+            sender.sendMessage(Utils.pColor(EconomyHandler.getInstance().getNoPermissionMessage()));
             return true;
         }
 

@@ -6,7 +6,8 @@ public enum EconomyPermissions {
     BALANCE(EconomyHandler.ENUM_PREFIX + "balance"),
     ECONOMY(EconomyHandler.ENUM_PREFIX + "economy"),
     BALANCETOP(EconomyHandler.ENUM_PREFIX + "balancetop"),
-    WITHDRAW(EconomyHandler.ENUM_PREFIX + "withdraw");
+    WITHDRAW(EconomyHandler.ENUM_PREFIX + "withdraw"),
+    PAY(EconomyHandler.ENUM_PREFIX + "pay");
 
     private final String name;
 

@@ -1,9 +1,6 @@
 package com.coruptical.townshipcore.economy;
 
-import com.coruptical.townshipcore.economy.commands.BalanceCommand;
-import com.coruptical.townshipcore.economy.commands.BalanceTopCommand;
-import com.coruptical.townshipcore.economy.commands.EconomyCommand;
-import com.coruptical.townshipcore.economy.commands.WithdrawCommand;
+import com.coruptical.townshipcore.economy.commands.*;
 import com.coruptical.townshipcore.economy.event.WithdrawNoteUseEvent;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
 import com.coruptical.townshipcore.utils.Utils;
@@ -31,6 +28,8 @@ public class EconomyHandler implements Listener {
     public static final String ENUM_PREFIX = "economyhandler.";
     private final String NAMEUUID_TABLE_NAME = "NameUUID";
     private NamespacedKey withdrawNoteKey;
+    private String noPermissionMessage;
+
 
     public static EconomyHandler getInstance() {
         return instance;
@@ -40,13 +39,23 @@ public class EconomyHandler implements Listener {
 
     }
 
+    public String getNoPermissionMessage() {
+        return noPermissionMessage;
+    }
+
     public NamespacedKey getWithdrawNoteKey() {
         return withdrawNoteKey;
     }
 
-    public void init(JavaPlugin plugin, DatabaseHandler databaseHandler){
+    public JavaPlugin getPlugin(){
+        return plugin;
+    }
+
+    public void init(JavaPlugin plugin, DatabaseHandler databaseHandler, String noPermissionMessage){
         this.plugin = plugin;
         this.databaseHandler = databaseHandler;
+
+        this.noPermissionMessage = noPermissionMessage;
 
         // Create our tables
         createPlayedBeforeTable();
@@ -149,6 +158,9 @@ public class EconomyHandler implements Listener {
 
         WithdrawCommand withdrawCommand = new WithdrawCommand();
         plugin.getCommand("withdraw").setExecutor(withdrawCommand);
+
+        PayCommand payCommand = new PayCommand();
+        plugin.getCommand("pay").setExecutor(payCommand);
 
     }
 

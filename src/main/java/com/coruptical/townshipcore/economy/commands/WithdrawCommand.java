@@ -17,7 +17,6 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.ArrayList;
 
 public class WithdrawCommand implements CommandExecutor {
-    private final TownshipCore plugin = TownshipCore.getInstance();
     private final String USAGE_MESSAGE = "&8Incorrect usage: &7/withdraw <amount>";
 
     @Override
@@ -25,7 +24,7 @@ public class WithdrawCommand implements CommandExecutor {
         if (!(sender instanceof Player)) return true;
         Player p = (Player) sender;
         if (!p.hasPermission(EconomyPermissions.WITHDRAW.getName())) {
-            p.sendMessage(Utils.pColor(plugin.getNoPermissionMessage()));
+            p.sendMessage(Utils.pColor(EconomyHandler.getInstance().getNoPermissionMessage()));
             return true;
         }
 
