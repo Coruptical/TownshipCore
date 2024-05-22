@@ -10,14 +10,10 @@ import java.util.HashMap;
 
 public final class TownshipCore extends JavaPlugin {
     private static TownshipCore instance;
-    private HashMap<String, MarketItem> marketItemMap = new HashMap<>();
+
     private MarketHandler marketHandler;
     private DatabaseHandler databaseHandler;
     private EconomyHandler economyHandler;
-
-    public HashMap<String, MarketItem> getMarketItemMap() {
-        return marketItemMap;
-    }
 
     public DatabaseHandler getDatabaseHandler () {
         return databaseHandler;
@@ -47,8 +43,6 @@ public final class TownshipCore extends JavaPlugin {
         marketHandler = MarketHandler.getInstance();
         marketHandler.init(this);
         marketHandler.createCustomConfig();
-
-        marketItemMap = marketHandler.getMarketItems();
     }
 
     @Override

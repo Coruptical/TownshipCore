@@ -3,7 +3,6 @@ Economy system:
 of items that have buy/sell price
 - The buy requires that the player has the money
 - The sell requires that the player has the items in inventory
-- Economy handled by vault
 - Button to add a new item into the trade with preset buy/sell value
 
 Backend for economy:

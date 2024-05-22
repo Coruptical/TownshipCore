@@ -39,6 +39,10 @@ public class PayCommand implements CommandExecutor {
             sender.sendMessage(Utils.pColor("&7This player is invalid."));
             return;
         }
+        if (!player.isOnline()){
+            sender.sendMessage(Utils.pColor("&7This player is invalid."));
+            return;
+        }
 
         if (args[0].equalsIgnoreCase(sender.getName())){
             sender.sendMessage(Utils.pColor("&7You cannot pay yourself"));

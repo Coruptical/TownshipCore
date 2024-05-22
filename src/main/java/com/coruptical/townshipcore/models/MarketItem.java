@@ -1,14 +1,18 @@
 package com.coruptical.townshipcore.models;
 
+import org.bukkit.Material;
+
 public class MarketItem{
     private String itemName;
     private double buyPrice;
     private double sellPrice;
+    private Material material;
 
-    public MarketItem(String itemName, double buyPrice, double sellPrice) {
+    public MarketItem(String itemName, double buyPrice, double sellPrice, Material material) {
         this.itemName = itemName;
         this.buyPrice = buyPrice;
         this.sellPrice = sellPrice;
+        this.material = material;
     }
 
     public String getItemName() {

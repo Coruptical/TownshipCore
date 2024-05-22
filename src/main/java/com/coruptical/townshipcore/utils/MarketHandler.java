@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 import com.coruptical.townshipcore.TownshipCore;
 import com.coruptical.townshipcore.models.MarketItem;
+import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -20,12 +22,19 @@ public class MarketHandler {
     private static MarketHandler instance = new MarketHandler();
     private TownshipCore plugin;
 
+    private HashMap<String, MarketItem> marketItemMap = new HashMap<>();
+
+    public HashMap<String, MarketItem> getMarketItemMap() {
+        return marketItemMap;
+    }
+
     public static MarketHandler getInstance() {
         return instance;
     }
 
     public void init(TownshipCore pluginInstance){
         this.plugin = pluginInstance;
+        marketItemMap = getMarketItems();
     }
 
     // Rest of driver code
@@ -75,10 +84,19 @@ public class MarketHandler {
                     itemPath
             )));
 
-            MarketItem marketItem = new MarketItem(itemName, itemBuyPrice, itemSellPrice);
+            itemPath = itemPath.toUpperCase();
+            Material material = Material.getMaterial(itemPath);
+            if (material == null){
+                plugin.getLogger().log(Level.WARNING, String.format("Couldn't load market material under %s.", itemPath));
+                material = Material.BARRIER;
+            }
+
+            MarketItem marketItem = new MarketItem(itemName, itemBuyPrice, itemSellPrice, material);
             marketItemsMap.put(itemPath, marketItem);
         }
 
         return marketItemsMap;
     }
+
+
 }
