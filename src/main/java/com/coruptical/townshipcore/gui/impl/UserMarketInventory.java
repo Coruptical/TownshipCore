@@ -14,13 +14,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class HoeInventory extends InventoryGUI {
+public class UserMarketInventory extends InventoryGUI {
     private final TownshipCore plugin = TownshipCore.getInstance();
 
     @Override
     protected Inventory createInventory() {
         return Bukkit.createInventory(null, 9,
-                Utils.color("&7[&bHarvester Hoe Upgrades&7]"));
+                Utils.color("&7[&bMarket&7]"));
 
     }
 
@@ -39,6 +39,8 @@ public class HoeInventory extends InventoryGUI {
 
     private HashMap<Integer, InventoryButton> createButtons(Player p){
         HashMap<Integer, InventoryButton> buttonHashMap = new HashMap<>();
+
+        int count = 0;
 
         return buttonHashMap;
     }
@@ -61,7 +63,4 @@ public class HoeInventory extends InventoryGUI {
 
         return stack;
     }
-
-
-
 }
