@@ -14,3 +14,28 @@ Backend for economy:
 Backend for database handler:
 - We need to be able to see if a table exists, so we can make a table of table names with ids
 for people to query and see if a table exists based on these names.
+
+Skill system:
+- Every skill can be leveled up through doing an action in the game,
+or through getting direct experience under that skill.
+- Farming, Combat, Foraging, Mining, Fishing, Enchanting
+Farming:
+    - Health bonus
+    - Increases farming fortune -> increases chances of multiple crop drops
+Mining:
+    - Resistance bonus -> Every couple of levels player gains resistance effect
+    - Increases mining fortune -> increases chances of several mining drops on ores
+Combat:
+    - Increases damage dealt to mobs (and players?)
+Foraging:
+    - Increases strength -> Every couple of levels gain strength effect
+    - Increases foraging fortune -> increases chances of multiple log drops
+Fishing:
+    - Health bonus
+    - Increases fishing fortune -> increases chances of multiple fish drops + treasures
+Enchanting:
+    - Increases intelligence -> increases xp orbs gained from any source
+
+- Refer back to harvester hoes plugin
+- Enum with skill classes inside it
+- Max level, xp needed multiplier, base exp needed, ...
