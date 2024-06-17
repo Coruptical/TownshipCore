@@ -14,18 +14,15 @@ public class SkillModel {
 
     private int maxLevel;
 
-    private double priceMultiplier;
-
     private double levelMultiplier;
 
-    public SkillModel(String name, String description, int maxLevel, Material guiMaterial, int startingPrice,
-                      double priceMultiplier, double levelMultiplier){
+    public SkillModel(String name, String description, int maxLevel, Material guiMaterial, int startingExp,
+                      double levelMultiplier){
         this.name = name;
         this.description = description;
         this.maxLevel = maxLevel;
         this.guiMaterial = guiMaterial;
-        this.startingExp = startingPrice;
-        this.priceMultiplier = priceMultiplier;
+        this.startingExp = startingExp;
         this.levelMultiplier = levelMultiplier;
     }
 
@@ -67,14 +64,6 @@ public class SkillModel {
 
     public void setStartingExp(int startingExp) {
         this.startingExp = startingExp;
-    }
-
-    public double getPriceMultiplier() {
-        return priceMultiplier;
-    }
-
-    public void setPriceMultiplier(double priceMultiplier) {
-        this.priceMultiplier = priceMultiplier;
     }
 
     public double getLevelMultiplier() {
