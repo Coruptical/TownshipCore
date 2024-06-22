@@ -79,7 +79,7 @@ public class EconomyCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        String targetUUID = EconomyHandler.getInstance().getUUIDFromName(connection, playerName);
+        String targetUUID = DatabaseHandler.getInstance().getUUIDFromName(connection, playerName);
         if (targetUUID == null){
             sender.sendMessage(Utils.pColor("&8This player hasn't played before."));
             return;

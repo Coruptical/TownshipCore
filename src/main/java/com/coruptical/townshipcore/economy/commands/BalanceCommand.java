@@ -1,6 +1,5 @@
 package com.coruptical.townshipcore.economy.commands;
 
-import com.coruptical.townshipcore.TownshipCore;
 import com.coruptical.townshipcore.economy.EconomyHandler;
 import com.coruptical.townshipcore.economy.enums.EconomyPermissions;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
@@ -23,7 +22,7 @@ public class BalanceCommand implements CommandExecutor, TabCompleter {
             Connection connection = DatabaseHandler.getInstance().getConnection();
             String playerName = args[0].toLowerCase();
 
-            String uuid = EconomyHandler.getInstance().getUUIDFromName(connection, playerName);
+            String uuid = DatabaseHandler.getInstance().getUUIDFromName(connection, playerName);
             if (uuid == null){
                 sender.sendMessage("This player has not played before.");
                 return true;
@@ -44,7 +43,7 @@ public class BalanceCommand implements CommandExecutor, TabCompleter {
 
             if (args.length == 0) {
 
-                String uuid = EconomyHandler.getInstance().getUUIDFromName(connection, p.getName());
+                String uuid = DatabaseHandler.getInstance().getUUIDFromName(connection, p.getName());
 
                 double balance = EconomyHandler.getInstance().getBalance(uuid);
                 p.sendMessage(Utils.pColor(String.format("&aYour balance: &f$%.2f",
@@ -56,7 +55,7 @@ public class BalanceCommand implements CommandExecutor, TabCompleter {
 
             String playerName = args[0].toLowerCase();
 
-            String uuid = EconomyHandler.getInstance().getUUIDFromName(connection, playerName);
+            String uuid = DatabaseHandler.getInstance().getUUIDFromName(connection, playerName);
             if (uuid == null){
                 p.sendMessage(Utils.pColor("&8This player has not played before."));
                 return true;

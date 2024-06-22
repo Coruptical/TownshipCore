@@ -2,8 +2,10 @@ package com.coruptical.townshipcore;
 
 import com.coruptical.townshipcore.economy.EconomyHandler;
 import com.coruptical.townshipcore.models.MarketItem;
+import com.coruptical.townshipcore.skill.SkillManager;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
 import com.coruptical.townshipcore.utils.MarketHandler;
+import com.coruptical.townshipcore.utils.Utils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -14,6 +16,7 @@ public final class TownshipCore extends JavaPlugin {
     private MarketHandler marketHandler;
     private DatabaseHandler databaseHandler;
     private EconomyHandler economyHandler;
+    private SkillManager skillManager;
 
     public DatabaseHandler getDatabaseHandler () {
         return databaseHandler;
@@ -21,6 +24,10 @@ public final class TownshipCore extends JavaPlugin {
 
     public EconomyHandler getEconomyHandler() {
         return economyHandler;
+    }
+
+    public SkillManager getSkillManager() {
+        return skillManager;
     }
 
     public static TownshipCore getInstance() {
@@ -43,6 +50,10 @@ public final class TownshipCore extends JavaPlugin {
         marketHandler = MarketHandler.getInstance();
         marketHandler.init(this);
         marketHandler.createCustomConfig();
+
+        // Set up skill manager
+        skillManager = SkillManager.getInstance();
+        skillManager.init(instance, Utils.color(getPrefix()));
     }
 
     @Override

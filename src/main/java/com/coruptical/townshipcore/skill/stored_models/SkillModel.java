@@ -14,16 +14,12 @@ public class SkillModel {
 
     private int maxLevel;
 
-    private double levelMultiplier;
-
-    public SkillModel(String name, String description, int maxLevel, Material guiMaterial, int startingExp,
-                      double levelMultiplier){
+    public SkillModel(String name, String description, int maxLevel, Material guiMaterial, int startingExp){
         this.name = name;
         this.description = description;
         this.maxLevel = maxLevel;
         this.guiMaterial = guiMaterial;
         this.startingExp = startingExp;
-        this.levelMultiplier = levelMultiplier;
     }
 
     public String getName() {
@@ -64,14 +60,6 @@ public class SkillModel {
 
     public void setStartingExp(int startingExp) {
         this.startingExp = startingExp;
-    }
-
-    public double getLevelMultiplier() {
-        return levelMultiplier;
-    }
-
-    public void setLevelMultiplier(double levelMultiplier) {
-        this.levelMultiplier = levelMultiplier;
     }
 
     // Custom methods
