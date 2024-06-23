@@ -52,7 +52,7 @@ public final class TownshipCore extends JavaPlugin {
 
         // Set up skill manager
         skillManager = SkillManager.getInstance();
-        skillManager.init(instance, Utils.color(getPrefix()));
+        skillManager.init(instance);
         skillManager.setNoPermissionMessage(Utils.pColor(getNoPermissionMessage()));
     }
 

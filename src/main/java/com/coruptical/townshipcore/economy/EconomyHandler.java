@@ -6,9 +6,6 @@ import com.coruptical.townshipcore.utils.DatabaseHandler;
 import com.coruptical.townshipcore.utils.Utils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.*;
@@ -16,7 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
 
-public class EconomyHandler implements Listener {
+public class EconomyHandler{
     private static final EconomyHandler instance = new EconomyHandler();
     private JavaPlugin plugin;
     private DatabaseHandler databaseHandler;
@@ -81,7 +78,6 @@ public class EconomyHandler implements Listener {
     // Other utility methods
     private void registerAll(){
         // Register events
-        plugin.getServer().getPluginManager().registerEvents(EconomyHandler.getInstance(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new WithdrawNoteUseEvent(), plugin);
 
         // Register commands
@@ -105,27 +101,25 @@ public class EconomyHandler implements Listener {
     }
 
 
-    // Add player to economy table when they first join,
-    // and add to uuid-name table in async manner.
-    @EventHandler
-    private void onJoin(PlayerJoinEvent e) {
+    /**
+     * Add player to economy table when they first join,
+     * and add to uuid-name table in async manner.
+     * This method is to be called by the database handler.
+     */
+    public void handleFirstJoin(Player p) {
         Connection connection = databaseHandler.getConnection();
-        Player p = e.getPlayer();
 
         // Insert into has played before and insert into uuid-name table
         // or update the name into the uuid
-        if (!databaseHandler.hasPlayedBefore(connection, p.getUniqueId().toString())) {
-
-            String sqlInsertIntoEconomy = String.format("INSERT INTO %s(UUID, balance) VALUES(?, ?)", TABLE_NAME);
-            try {
-                PreparedStatement preparedStatement = connection.prepareStatement(sqlInsertIntoEconomy);
-                preparedStatement.setString(1, p.getUniqueId().toString());
-                preparedStatement.setDouble(2, 0);
-                preparedStatement.executeUpdate();
-            } catch (SQLException exception) {
-                plugin.getLogger().log(Level.SEVERE, "Error on player join creating player balance.");
-                throw new RuntimeException(exception);
-            }
+        String sqlInsertIntoEconomy = String.format("INSERT INTO %s(UUID, balance) VALUES(?, ?)", TABLE_NAME);
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlInsertIntoEconomy);
+            preparedStatement.setString(1, p.getUniqueId().toString());
+            preparedStatement.setDouble(2, 0);
+            preparedStatement.executeUpdate();
+        } catch (SQLException exception) {
+            plugin.getLogger().log(Level.SEVERE, "Error on player join creating player balance.");
+            throw new RuntimeException(exception);
         }
     }
 

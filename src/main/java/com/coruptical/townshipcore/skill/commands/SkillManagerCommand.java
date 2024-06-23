@@ -46,7 +46,12 @@ public class SkillManagerCommand implements CommandExecutor, TabCompleter {
         try {
             value = Integer.parseInt(valueUnparsed);
         } catch (NumberFormatException e){
-            sender.sendMessage(Utils.pColor("&8The value must be a number."));
+            sender.sendMessage(Utils.pColor("&8The value must be a whole number."));
+            return;
+        }
+
+        if (value < 0){
+            sender.sendMessage(Utils.pColor("&7This value is invalid."));
             return;
         }
 
@@ -89,36 +94,36 @@ public class SkillManagerCommand implements CommandExecutor, TabCompleter {
     }
 
     private void handleSetAll(CommandSender sender, Skill skill, int value){
-        if (value < 0 || value > skill.skillModel.getMaxLevel()){
-            sender.sendMessage(Utils.pColor("&7This value is invalid."));
+        if (value > skill.skillModel.getMaxLevel()){
+            sender.sendMessage(Utils.pColor("&7This value is too large."));
             return;
         }
 
         SkillManager.getInstance().setAllSkillLevel(skill, value);
-        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully set all players' %s skill to &f%s.", skill.toString(), value)));
+        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully set all players' %s skill to &f%s.", skill.toString().toLowerCase(), value)));
     }
 
     private void handleTakeAll(CommandSender sender, Skill skill, int value){
         SkillManager.getInstance().takeAllSkillLevel(skill, value);
         SkillManager.getInstance().normaliseLevels();
-        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully taken &f%s&a from all players' %s skill.", value, skill.toString())));
+        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully taken &f%s&a from all players' %s skill.", value, skill.toString().toLowerCase())));
     }
 
     private void handleAddAll(CommandSender sender, Skill skill, int value){
         SkillManager.getInstance().addAllSkillLevel(skill, value);
         SkillManager.getInstance().normaliseLevels();
-        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully added &f%s&a to all players' %s skill.", value, skill.toString())));
+        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully added &f%s&a to all players' %s skill.", value, skill.toString().toLowerCase())));
     }
 
     private void handleOptions(CommandSender sender, String cmdOption, String targetUUID, String playerName, Skill skill, int value){
         if (cmdOption.equalsIgnoreCase("set")){
-            if (value < 0 || value > skill.skillModel.getMaxLevel()){
-                sender.sendMessage(Utils.pColor("&7This value is invalid."));
+            if (value > skill.skillModel.getMaxLevel()){
+                sender.sendMessage(Utils.pColor("&7This value is too large."));
                 return;
             }
 
             SkillManager.getInstance().setSkillLevel(targetUUID, skill, value);
-            sender.sendMessage(Utils.pColor(String.format("&aSuccessfully set %s's %s level to &f$%s.", playerName, skill.toString(), value)));
+            sender.sendMessage(Utils.pColor(String.format("&aSuccessfully set %s's %s level to &f%s.", playerName, skill.toString().toLowerCase(), value)));
         }
         else if (cmdOption.equalsIgnoreCase("add")){
             if ((value + SkillManager.getInstance().getSkillLevel(targetUUID, skill)) > skill.skillModel.getMaxLevel()){
@@ -127,7 +132,7 @@ public class SkillManagerCommand implements CommandExecutor, TabCompleter {
             }
 
             SkillManager.getInstance().addSkillLevel(targetUUID, skill, value);
-            sender.sendMessage(Utils.pColor(String.format("&aSuccessfully added &f%s&a to %s's %s level", value, playerName, skill.toString())));
+            sender.sendMessage(Utils.pColor(String.format("&aSuccessfully added &f%s&a to %s's %s level", value, playerName, skill.toString().toLowerCase())));
         }
         else if (cmdOption.equalsIgnoreCase("take")){
             if ((SkillManager.getInstance().getSkillLevel(targetUUID, skill) - value) < 0){
@@ -136,7 +141,7 @@ public class SkillManagerCommand implements CommandExecutor, TabCompleter {
             }
 
             SkillManager.getInstance().takeSkillLevel(targetUUID, skill, value);
-            sender.sendMessage(Utils.pColor(String.format("&aSuccessfully removed &f%s&a from %s's %s level.", value, playerName, skill.toString())));
+            sender.sendMessage(Utils.pColor(String.format("&aSuccessfully removed &f%s&a from %s's %s level.", value, playerName, skill.toString().toLowerCase())));
         } else {
             sender.sendMessage(Utils.pColor(USAGE_MESSAGE));
         }

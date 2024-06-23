@@ -1,5 +1,7 @@
 package com.coruptical.townshipcore.utils;
 import com.coruptical.townshipcore.TownshipCore;
+import com.coruptical.townshipcore.economy.EconomyHandler;
+import com.coruptical.townshipcore.skill.SkillManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -49,17 +51,17 @@ public class DatabaseHandler implements Listener {
                 createTableSchemaTable();
                 createNameUUIDTable();
                 createPlayedBeforeTable();
-
-                // Register this class as an event listener
-                registerAll();
             } catch (IOException e) {
                 plugin.getLogger().log(Level.SEVERE, "Failed to create data.db file!");
             }
         }
+
+        // Register this class as an event listener
+        registerAll();
     }
 
     private void registerAll(){
-        plugin.getServer().getPluginManager().registerEvents(getInstance(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(DatabaseHandler.getInstance(), plugin);
     }
 
     private Connection getDatabaseConnection(){
@@ -218,6 +220,8 @@ public class DatabaseHandler implements Listener {
         // Insert into has played before and insert into uuid-name table
         // or update the name into the uuid
         if (!hasPlayedBefore(connection, p.getUniqueId().toString())){
+            EconomyHandler.getInstance().handleFirstJoin(p);
+            SkillManager.getInstance().handleFirstJoin(p);
 
             String sqlInsertIntoPlayedBefore = String.format(
                     "INSERT INTO %s(UUID) VALUES (\"%s\")",

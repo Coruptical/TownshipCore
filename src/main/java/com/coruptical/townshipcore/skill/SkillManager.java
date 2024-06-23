@@ -3,7 +3,7 @@ package com.coruptical.townshipcore.skill;
 import com.coruptical.townshipcore.skill.commands.SkillManagerCommand;
 import com.coruptical.townshipcore.skill.stored_models.Skill;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
-import com.coruptical.townshipcore.utils.Utils;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
@@ -14,7 +14,6 @@ import java.util.logging.Level;
 
 public class SkillManager {
     private JavaPlugin plugin;
-    private String messagePrefix;
     private DatabaseHandler databaseHandler;
     private final String TABLE_NAME = "Player_Skill";
     private String noPermissionMessage = "";
@@ -41,9 +40,8 @@ public class SkillManager {
      * This method should only be run on start-up.
      * It is currently dependent on my economy handler, which contains a UUID-name conversion.
      */
-    public void init(JavaPlugin plugin, String messagePrefix){
+    public void init(JavaPlugin plugin){
         this.plugin = plugin;
-        this.messagePrefix = messagePrefix;
         this.databaseHandler = DatabaseHandler.getInstance();
 
         createPlayerSkillTable();
@@ -210,6 +208,47 @@ public class SkillManager {
         } catch (SQLException e) {
             plugin.getLogger().log(Level.SEVERE, "Error while trying to add to player skill level.");
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Utility method for the method below.
+     */
+    private String createInsertSkillSQL(String uuid){
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(String.format("INSERT INTO %s VALUES(", TABLE_NAME));
+        stringBuilder.append(String.format("\"%s\"", uuid)).append(",");
+
+
+        for (Skill skill : Skill.values()){
+            stringBuilder.append("0,");
+        }
+
+        stringBuilder.deleteCharAt(stringBuilder.length()-1);
+        stringBuilder.append(")");
+
+
+        return stringBuilder.toString();
+    }
+
+    /**
+     * When a player first joins, set all skill levels to 0.
+     * This method is to be called in the database handler.
+     */
+    public void handleFirstJoin(Player p){
+        Connection connection = databaseHandler.getConnection();
+
+        // Insert into has played before and insert into uuid-name table
+        // or update the name into the uuid
+        String sqlInsertSkills = createInsertSkillSQL(p.getUniqueId().toString());
+        plugin.getLogger().log(Level.INFO, sqlInsertSkills);
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlInsertSkills);
+            preparedStatement.executeUpdate();
+        } catch (SQLException exception) {
+            plugin.getLogger().log(Level.SEVERE, "Error on player join creating player skill levels.");
+            throw new RuntimeException(exception);
         }
     }
 }
