@@ -9,7 +9,14 @@ public enum Skill {
             Utils.color("&7Increases farming fortune"),
             50,
             Material.SUNFLOWER,
-            500));
+            500)),
+    FORAGING(new SkillModel(
+            Utils.color("&6Foraging"),
+            Utils.color("&7Increases foraging fortune"),
+            50,
+            Material.DIAMOND_AXE,
+            200)
+    );
 
     public final SkillModel skillModel;
 

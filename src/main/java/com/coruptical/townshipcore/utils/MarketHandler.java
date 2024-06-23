@@ -34,6 +34,7 @@ public class MarketHandler {
 
     public void init(TownshipCore pluginInstance){
         this.plugin = pluginInstance;
+        createCustomConfig();
         marketItemMap = getMarketItems();
     }
 

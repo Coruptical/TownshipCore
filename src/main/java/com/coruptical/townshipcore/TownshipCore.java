@@ -49,7 +49,6 @@ public final class TownshipCore extends JavaPlugin {
         // Set up market handler and market items
         marketHandler = MarketHandler.getInstance();
         marketHandler.init(this);
-        marketHandler.createCustomConfig();
 
         // Set up skill manager
         skillManager = SkillManager.getInstance();
