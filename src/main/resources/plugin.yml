@@ -19,3 +19,8 @@ commands:
     description: Withdraw a part of your balance into a check
   pay:
     description: Pay an online user
+  skillmanager:
+    description: Manage the level of players skills.
+    aliases:
+      - sm
+      - sman

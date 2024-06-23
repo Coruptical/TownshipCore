@@ -30,6 +30,7 @@ public class EconomyCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
+    // TODO: Add tab completion to this command
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         return null;
@@ -94,12 +95,12 @@ public class EconomyCommand implements CommandExecutor, TabCompleter {
 
     private void handleTakeAll(CommandSender sender, double value){
         EconomyHandler.getInstance().takeAllBalance(value);
-        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully taken &f$%.2f&a from all player's balance.", Utils.round(value))));
+        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully taken &f$%.2f&a from all players' balance.", Utils.round(value))));
     }
 
     private void handleAddAll(CommandSender sender, double value){
         EconomyHandler.getInstance().addAllBalance(value);
-        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully added &f$%.2f&a to all player's balance.", Utils.round(value))));
+        sender.sendMessage(Utils.pColor(String.format("&aSuccessfully added &f$%.2f&a to all players' balance.", Utils.round(value))));
     }
 
     private void handleOptions(CommandSender sender, String cmdOption, String targetUUID, String playerName, double value){
