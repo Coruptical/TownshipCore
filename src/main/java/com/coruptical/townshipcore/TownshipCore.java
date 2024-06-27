@@ -1,14 +1,15 @@
 package com.coruptical.townshipcore;
-
 import com.coruptical.townshipcore.economy.EconomyHandler;
-import com.coruptical.townshipcore.models.MarketItem;
+import com.coruptical.townshipcore.gui.GUIListener;
+import com.coruptical.townshipcore.gui.GUIManager;
 import com.coruptical.townshipcore.skill.SkillManager;
+import com.coruptical.townshipcore.skill.commands.InfoSkillCommand;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
 import com.coruptical.townshipcore.utils.MarketHandler;
 import com.coruptical.townshipcore.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
 
 public final class TownshipCore extends JavaPlugin {
     private static TownshipCore instance;
@@ -17,6 +18,11 @@ public final class TownshipCore extends JavaPlugin {
     private DatabaseHandler databaseHandler;
     private EconomyHandler economyHandler;
     private SkillManager skillManager;
+    private GUIManager guiManager;
+
+    public GUIManager getGuiManager() {
+        return guiManager;
+    }
 
     public DatabaseHandler getDatabaseHandler () {
         return databaseHandler;
@@ -54,6 +60,17 @@ public final class TownshipCore extends JavaPlugin {
         skillManager = SkillManager.getInstance();
         skillManager.init(instance);
         skillManager.setNoPermissionMessage(Utils.pColor(getNoPermissionMessage()));
+
+        // Set up gui manager to handle inventories
+        guiManager = new GUIManager();
+
+        // Set up gui listener to listen for events and pass them to the responsible inventory.
+        GUIListener guiListener = new GUIListener(guiManager);
+        Bukkit.getPluginManager().registerEvents(guiListener, getInstance());
+
+        // Register the command to open skills, using this plugin's gui manager.
+        InfoSkillCommand infoSkillCommand = new InfoSkillCommand(getGuiManager());
+        getCommand("skills").setExecutor(infoSkillCommand);
     }
 
     @Override

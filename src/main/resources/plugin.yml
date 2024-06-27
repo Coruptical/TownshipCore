@@ -24,3 +24,5 @@ commands:
     aliases:
       - sm
       - sman
+  skills:
+    description: Shows your skill progress.

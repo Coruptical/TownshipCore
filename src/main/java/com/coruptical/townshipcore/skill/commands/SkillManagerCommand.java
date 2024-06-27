@@ -1,6 +1,5 @@
 package com.coruptical.townshipcore.skill.commands;
 
-import com.coruptical.townshipcore.economy.EconomyHandler;
 import com.coruptical.townshipcore.skill.SkillManager;
 import com.coruptical.townshipcore.skill.stored_models.Skill;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
@@ -147,6 +146,8 @@ public class SkillManagerCommand implements CommandExecutor, TabCompleter {
         }
     }
 
+
+    // TODO: Make tab completer
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         return null;

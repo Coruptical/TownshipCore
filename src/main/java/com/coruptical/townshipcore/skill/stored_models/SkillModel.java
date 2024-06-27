@@ -1,7 +1,11 @@
 package com.coruptical.townshipcore.skill.stored_models;
 
-import org.bukkit.ChatColor;
+import com.coruptical.townshipcore.skill.SkillManager;
+import com.coruptical.townshipcore.utils.Utils;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
 
 public class SkillModel {
     private String name;
@@ -63,8 +67,16 @@ public class SkillModel {
     }
 
     // Custom methods
+    public ItemStack createGuiItem(int currentLevel){
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(String.format("&7Your level: &f%s", currentLevel));
 
-    public String getKeyName(){
-        return ChatColor.stripColor(this.getName()).replace(" ", "_");
+        long nextLevelCost = Math.round(getStartingExp()*Math.exp(0.12*currentLevel));
+        lore.add(String.format("&7Next level cost: &f%s exp", nextLevelCost));
+
+
+        String[] loreArray = new String[lore.size()];
+        loreArray = lore.toArray(loreArray);
+        return Utils.createItem(getGuiMaterial(), "&7[" + getName() + "&7]", loreArray);
     }
 }

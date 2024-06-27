@@ -45,22 +45,5 @@ public class UserMarketInventory extends InventoryGUI {
         return buttonHashMap;
     }
 
-    private ItemStack createItem(Material material, String name, String[] lore){
-        ItemStack stack = new ItemStack(material, 1);
-        ItemMeta meta = stack.getItemMeta();
 
-        meta.setDisplayName(Utils.color(name));
-
-        ArrayList<String> coloredLore = new ArrayList<>();
-
-        for (String string : lore){
-            coloredLore.add(Utils.color(string));
-        }
-
-        meta.setLore(coloredLore);
-
-        stack.setItemMeta(meta);
-
-        return stack;
-    }
 }

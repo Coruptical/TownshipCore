@@ -1,5 +1,6 @@
 package com.coruptical.townshipcore.skill;
 
+import com.coruptical.townshipcore.skill.commands.InfoSkillCommand;
 import com.coruptical.townshipcore.skill.commands.SkillManagerCommand;
 import com.coruptical.townshipcore.skill.stored_models.Skill;
 import com.coruptical.townshipcore.utils.DatabaseHandler;

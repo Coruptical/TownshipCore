@@ -1,6 +1,5 @@
 package com.coruptical.townshipcore.economy.commands;
 
-import com.coruptical.townshipcore.TownshipCore;
 import com.coruptical.townshipcore.economy.EconomyHandler;
 import com.coruptical.townshipcore.economy.enums.EconomyPermissions;
 import com.coruptical.townshipcore.utils.Utils;
@@ -56,9 +55,6 @@ public class WithdrawCommand implements CommandExecutor {
             p.sendMessage(Utils.pColor("&7You cannot withdraw this much."));
             return;
         }
-
-
-        // TODO: Give the paper item we can get money from and add functionality
 
         if (p.getInventory().firstEmpty() == -1){
             p.sendMessage(Utils.pColor("&7You have no inventory space to withdraw money."));
