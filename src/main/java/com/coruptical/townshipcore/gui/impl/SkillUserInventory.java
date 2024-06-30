@@ -38,7 +38,8 @@ public class SkillUserInventory extends InventoryGUI {
         for (Skill skill : Skill.values()){
             int currentLevel = skillManager.getSkillLevel(p.getUniqueId().toString(), skill);
             InventoryButton button = new InventoryButton()
-                    .creator(player -> skill.skillModel.createGuiItem(currentLevel))
+                    .creator(player -> skill.skillModel.createGuiItem(
+                            player.getUniqueId().toString(), skill, currentLevel))
                     .consumer(event -> {
                     });
 

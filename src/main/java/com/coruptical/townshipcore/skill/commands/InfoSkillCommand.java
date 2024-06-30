@@ -1,6 +1,5 @@
 package com.coruptical.townshipcore.skill.commands;
 
-import com.coruptical.townshipcore.TownshipCore;
 import com.coruptical.townshipcore.gui.GUIManager;
 import com.coruptical.townshipcore.gui.impl.SkillUserInventory;
 import org.bukkit.command.Command;

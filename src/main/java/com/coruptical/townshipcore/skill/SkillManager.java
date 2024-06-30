@@ -1,6 +1,5 @@
 package com.coruptical.townshipcore.skill;
 
-import com.coruptical.townshipcore.skill.commands.InfoSkillCommand;
 import com.coruptical.townshipcore.skill.commands.SkillManagerCommand;
 import com.coruptical.townshipcore.skill.stored_models.Skill;
 import com.coruptical.townshipcore.utils.DatabaseHandler;
@@ -17,6 +16,7 @@ public class SkillManager {
     private JavaPlugin plugin;
     private DatabaseHandler databaseHandler;
     private final String TABLE_NAME = "Player_Skill";
+    private final String EXPERIENCE_TABLE_NAME = "Player_Skill_Experience";
     private String noPermissionMessage = "";
 
     private SkillManager(){
@@ -46,6 +46,7 @@ public class SkillManager {
         this.databaseHandler = DatabaseHandler.getInstance();
 
         createPlayerSkillTable();
+        createPlayerExperienceTable();
         registerAll();
     }
 
@@ -58,7 +59,16 @@ public class SkillManager {
     private String getSkillsAsParameter(){
         StringBuilder stringBuilder = new StringBuilder();
         for (Skill skill : Skill.values()){
-            stringBuilder.append(skill.toString() + "Level INT,");
+            stringBuilder.append(skill.toString()).append("Level INT,");
+        }
+        stringBuilder.deleteCharAt(stringBuilder.length()-1);
+        return stringBuilder.toString();
+    }
+
+    private String getSkillsExperienceAsParameter(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Skill skill : Skill.values()){
+            stringBuilder.append(skill.toString()).append("Experience INT,");
         }
         stringBuilder.deleteCharAt(stringBuilder.length()-1);
         return stringBuilder.toString();
@@ -74,6 +84,19 @@ public class SkillManager {
         boolean isCreated = databaseHandler.createTable(connection, TABLE_NAME, parameters);
         if (isCreated){
             plugin.getLogger().log(Level.INFO, "Created player skill table in database.");
+        }
+    }
+
+    /**
+     * Creates the table that stores information about the amount of exp a player has per skill.
+     */
+    private void createPlayerExperienceTable(){
+        Connection connection = databaseHandler.getConnection();
+
+        String parameters = "UUID varchar(255) NOT NULL PRIMARY KEY, " + getSkillsExperienceAsParameter();
+        boolean isCreated = databaseHandler.createTable(connection, EXPERIENCE_TABLE_NAME, parameters);
+        if (isCreated){
+            plugin.getLogger().log(Level.INFO, "Created player skill experience table in database.");
         }
     }
 
@@ -179,6 +202,38 @@ public class SkillManager {
         }
     }
 
+    public int getAmountExperience(String playerUUID, Skill skill){
+        Connection connection = databaseHandler.getConnection();
+
+        String sql = String.format("SELECT %s FROM %s WHERE UUID=?", skill.toString()+"Experience", EXPERIENCE_TABLE_NAME);
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, playerUUID);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt(1);
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Error while trying to fetch player experience amount.");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setAmountExperience(String playerUUID, Skill skill, int value){
+        Connection connection = databaseHandler.getConnection();
+
+        String sql = String.format("UPDATE %s SET %s=? WHERE UUID=?", EXPERIENCE_TABLE_NAME, skill.toString() + "Experience");
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, value);
+            preparedStatement.setString(2, playerUUID);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Error while trying to set player experience amount.");
+            throw new RuntimeException(e);
+        }
+    }
+
     public int getSkillLevel(String playerUUID, Skill skill){
         Connection connection = databaseHandler.getConnection();
 
@@ -191,7 +246,7 @@ public class SkillManager {
             resultSet.next();
             return resultSet.getInt(1);
         } catch (SQLException e) {
-            plugin.getLogger().log(Level.SEVERE, "Error while trying to fetch player balance.");
+            plugin.getLogger().log(Level.SEVERE, "Error while trying to fetch player skill level.");
             throw new RuntimeException(e);
         }
     }
@@ -213,12 +268,12 @@ public class SkillManager {
     }
 
     /**
-     * Utility method for the method below.
+     * Utility method for the join method.
      */
-    private String createInsertSkillSQL(String uuid){
+    private String createInsertSkillSQL(String uuid, String table_name){
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append(String.format("INSERT INTO %s VALUES(", TABLE_NAME));
+        stringBuilder.append(String.format("INSERT INTO %s VALUES(", table_name));
         stringBuilder.append(String.format("\"%s\"", uuid)).append(",");
 
 
@@ -233,6 +288,7 @@ public class SkillManager {
         return stringBuilder.toString();
     }
 
+
     /**
      * When a player first joins, set all skill levels to 0.
      * This method is to be called in the database handler.
@@ -242,10 +298,13 @@ public class SkillManager {
 
         // Insert into has played before and insert into uuid-name table
         // or update the name into the uuid
-        String sqlInsertSkills = createInsertSkillSQL(p.getUniqueId().toString());
-        plugin.getLogger().log(Level.INFO, sqlInsertSkills);
+        String sqlInsertSkills = createInsertSkillSQL(p.getUniqueId().toString(), TABLE_NAME);
+        String sqlInsertExperience = createInsertSkillSQL(p.getUniqueId().toString(), EXPERIENCE_TABLE_NAME);
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sqlInsertSkills);
+            preparedStatement.executeUpdate();
+
+            preparedStatement = connection.prepareStatement(sqlInsertExperience);
             preparedStatement.executeUpdate();
         } catch (SQLException exception) {
             plugin.getLogger().log(Level.SEVERE, "Error on player join creating player skill levels.");
