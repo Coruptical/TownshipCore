@@ -15,8 +15,34 @@ public enum Skill {
             Utils.color("&7Increases foraging fortune"),
             50,
             Material.DIAMOND_AXE,
-            200)
-    );
+            200)),
+    MINING(new SkillModel(
+            Utils.color("&7Mining"),
+            Utils.color("&7Increases mining fortune"),
+            50,
+            Material.DIAMOND_PICKAXE,
+            200)),
+    COMBAT(new SkillModel(
+            Utils.color("&cCombat"),
+            Utils.color("&7Increases damage dealt to mobs"),
+            30,
+            Material.DIAMOND_SWORD,
+            200
+    )),
+    FISHING(new SkillModel(
+            Utils.color("&bFishing"),
+            Utils.color("&7Increases fishing fortune and bonus health"),
+            50,
+            Material.FISHING_ROD,
+            200
+    )),
+    ENCHANTING(new SkillModel(
+            Utils.color("&dEnchanting"),
+            Utils.color("&7Increases intelligence"),
+            40,
+            Material.ENCHANTING_TABLE,
+            300
+    ));
 
     public final SkillModel skillModel;
 
